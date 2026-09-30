@@ -24,7 +24,8 @@ public class Ticket {
     private Integer minutosTotales;
 
     @Column(name = "estado")
-    private Integer estado;
+    @Enumerated(EnumType.ORDINAL)
+    private EstadoTicket estado;
 
     @Column(name = "importe")
     private BigDecimal importe;

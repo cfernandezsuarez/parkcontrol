@@ -24,7 +24,8 @@ public class Plaza {
     private Integer planta;
 
     @Column(name = "tipo")
-    private Integer tipo;
+    @Enumerated(EnumType.ORDINAL)
+    private TipoPlaza tipo;
 
     @Column(name = "estado")
     private Boolean estado;
