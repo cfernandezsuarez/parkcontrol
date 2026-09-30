@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(schema = "parkcontrol", name = "ticket")
@@ -52,4 +53,13 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_plaza")
     private Plaza plaza;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            schema = "parkcontrol",
+            name = "ticket_abonado",
+            joinColumns = @JoinColumn(name = "id_ticket"),
+            inverseJoinColumns = @JoinColumn(name = "id_abonado")
+    )
+    private List<Abonado> abonado;
 }
