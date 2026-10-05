@@ -1,6 +1,9 @@
 package es.safareyes.parkcontrol;
 
+import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.Tarifa;
+import es.safareyes.parkcontrol.modelos.TipoPlaza;
+import es.safareyes.parkcontrol.repositorios.IPlazaRepository;
 import es.safareyes.parkcontrol.repositorios.ITarifaRepositorio;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +16,19 @@ import java.util.List;
 public class TestRepositorios {
 
     @Autowired
-    private ITarifaRepositorio repository;
+    private IPlazaRepository plazaRepository;
 
     @Test
-    public void TestRepositorios() {
+    public void listadoPlantaTipoEstado() {
 
-        List<Tarifa> listaTarifas = repository.findAll();
+        List<Plaza> listaPlazas = plazaRepository.findByPlantaAndTipoAndEstado(1, TipoPlaza.ELECTRICA, true);
+
+    }
+
+    @Test
+    public void disponiblePlantaTipo() {
+
+        List<Plaza> listaPlazas = plazaRepository.plazasLibresPorPlantaTipo(1, TipoPlaza.ELECTRICA);
 
     }
 }
