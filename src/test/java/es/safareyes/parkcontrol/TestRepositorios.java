@@ -2,20 +2,14 @@ package es.safareyes.parkcontrol;
 
 import es.safareyes.parkcontrol.dtos.ImporteTicket;
 import es.safareyes.parkcontrol.modelos.*;
-import es.safareyes.parkcontrol.repositorios.IAbonadoRepository;
-import es.safareyes.parkcontrol.repositorios.IPlazaRepository;
-import es.safareyes.parkcontrol.repositorios.ITarifaRepositorio;
-import es.safareyes.parkcontrol.repositorios.ITicketRepository;
-import org.hibernate.query.Page;
+import es.safareyes.parkcontrol.repositorios.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +28,9 @@ public class TestRepositorios {
 
     @Autowired
     private IAbonadoRepository abonadoRepository;
+
+    @Autowired
+    private IPromocionRepository promocionRepository;
 
     // GET 1
     @Test
@@ -63,7 +60,7 @@ public class TestRepositorios {
     @Test
     public void importeTicketEstado() {
 
-        List<ImporteTicket> listaTickets = ticketRepository.importeTicketAbierto("4321KBB");
+        List<ImporteTicket> listaTickets = ticketRepository.importeTicketAbierto("1234ABC");
 
     }
 
@@ -71,7 +68,26 @@ public class TestRepositorios {
     @Test
     public void listadoTicketPorAbonado() {
 
-        List<Ticket> listaTicketAbonado = ticketRepository.listadoTicketPorAbonado(1);
+        List<Abonado> abonado = abonadoRepository.findAllByNombreAndMatricula("Ana López", "1234ABC");
+        Abonado abonado1 = abonado.getFirst();
+
+        List<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado1, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90);
+
+    }
+
+    // GET 12
+    @Test
+    public void descuentosAplicados() {
+
+        List<Ticket> tickets = ticketRepository.findAllById(1);
+
+    }
+
+    // GET 13
+    @Test
+    public void catalogoPromociones() {
+
+        List<Promocion> promociones = promocionRepository.catalogoPromociones();
 
     }
 }
