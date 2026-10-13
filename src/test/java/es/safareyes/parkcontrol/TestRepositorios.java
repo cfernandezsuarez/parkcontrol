@@ -7,8 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +41,7 @@ public class TestRepositorios {
     @Test
     public void listadoPlantaTipoEstado() {
 
-        List<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
+        Page<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA, PageRequest.of(0, 10));
 
     }
 
@@ -72,7 +76,7 @@ public class TestRepositorios {
         List<Abonado> abonado = abonadoRepository.findAllByNombreAndMatricula("Carlos Gómez", "1234BBB");
         Abonado abonado1 = abonado.getFirst();
 
-        List<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado1, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90);
+        Page<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado1, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90, PageRequest.of(0, 10));
 
     }
 

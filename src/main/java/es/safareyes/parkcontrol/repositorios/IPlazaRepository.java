@@ -7,17 +7,21 @@ import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.EstadoTicket;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 @Repository
 public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
 
-    List<Plaza> findAllByPlantaAndTipoAndEstado(Integer planta, TipoPlaza tipo, EstadoPlaza estado);
+    Page<Plaza> findAllByPlantaAndTipoAndEstado(Integer planta, TipoPlaza tipo, EstadoPlaza estado, Pageable pageable);
 
     @Query(value = "select p from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.LIBRE and p.planta = :planta and p.tipo = :tipoPlaza")
     List<Plaza> plazasLibresPorPlantaTipo(
