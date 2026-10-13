@@ -1,6 +1,6 @@
 package es.safareyes.parkcontrol;
 
-import es.safareyes.parkcontrol.dtos.ImporteTicket;
+import es.safareyes.parkcontrol.dtos.*;
 import es.safareyes.parkcontrol.modelos.*;
 import es.safareyes.parkcontrol.repositorios.*;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 
 import java.awt.print.Pageable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class TestRepositorios {
     @Test
     public void listadoPlantaTipoEstado() {
 
-        List<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(1, TipoPlaza.NORMAL, false);
+        List<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
 
     }
 
@@ -68,7 +69,7 @@ public class TestRepositorios {
     @Test
     public void listadoTicketPorAbonado() {
 
-        List<Abonado> abonado = abonadoRepository.findAllByNombreAndMatricula("Ana López", "1234ABC");
+        List<Abonado> abonado = abonadoRepository.findAllByNombreAndMatricula("Carlos Gómez", "1234BBB");
         Abonado abonado1 = abonado.getFirst();
 
         List<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado1, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90);
@@ -79,7 +80,7 @@ public class TestRepositorios {
     @Test
     public void descuentosAplicados() {
 
-        List<Ticket> tickets = ticketRepository.findAllById(1);
+        List<DetalleTicketDescuento> ticketsDescuentos = ticketRepository.ticketsDescuentos(1);
 
     }
 
@@ -88,6 +89,38 @@ public class TestRepositorios {
     public void catalogoPromociones() {
 
         List<Promocion> promociones = promocionRepository.catalogoPromociones();
+
+    }
+
+    // GET 15
+    @Test
+    public void recaudacionDia() {
+
+        List<RecaudacionDia> recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2026, 3, 1, 0, 0), LocalDateTime.of(2026, 10, 5, 14, 0));
+
+    }
+
+    // GET 16
+    @Test
+    public void ocupacionPlanta() {
+
+        List<OcupacionPlanta> plantasOcupadas = plazaRepository.ocupacionPlanta(EstadoTicket.ABIERTO);
+
+    }
+
+    // GET EXTRA
+    @Test
+    public void ocupacionPlazasTipo() {
+
+        List<OcupacionPorTipo> ocupacionPorTipos = plazaRepository.opcupacionPorTipos();
+
+    }
+
+    // GET EXTRA
+    @Test
+    public void ocupacionPlazasTotal() {
+
+        List<TotalPlazasOcupadas> ocupacionPlazasTotal = plazaRepository.totalPlazasOcupadas();
 
     }
 }
