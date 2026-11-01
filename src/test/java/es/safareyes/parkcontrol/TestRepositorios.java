@@ -112,11 +112,26 @@ public class TestRepositorios {
 
     }
 
+    @Test
+    public void ocupacionTotales() {
+
+        Long ocupacionTotal = plazaRepository.count();
+
+    }
+
     // GET EXTRA
     @Test
     public void ocupacionPlazasTipo() {
 
         List<OcupacionPorTipo> ocupacionPorTipos = plazaRepository.opcupacionPorTipos();
+
+    }
+
+    // GET EXTRA
+    @Test
+    public void ocupacionPlazasPlanta() {
+
+        OcupacionPorPlanta ocupacionPorPlanta = plazaRepository.ocupacionPorPlanta();
 
     }
 

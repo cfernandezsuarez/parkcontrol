@@ -1,5 +1,7 @@
 package es.safareyes.parkcontrol.controladores;
 
+import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
+import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
@@ -23,6 +25,21 @@ public class PlazaController {
     public Page<Plaza> consultarPlazas(){
         return service.consultarPlazas(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
     };
+
+    @GetMapping("total")
+    public Long consultarPlazasTotales() {
+        return service.consultarPlazasTotales();
+    }
+
+    @GetMapping("/ocupadas/total")
+    public List<TotalPlazasOcupadas> consultarPlazasTotalesOcupadas() {
+        return service.consultarPlazasTotalesOcupadas();
+    }
+
+    @GetMapping("/ocupadas/planta")
+    public OcupacionPorPlanta ocupacionPorPlanta() {
+        return service.consultarOcupacionPorPlanta();
+    }
 
     @GetMapping("/disponibilidad")
     public List<Plaza> consultarPlazasDisponibles(){

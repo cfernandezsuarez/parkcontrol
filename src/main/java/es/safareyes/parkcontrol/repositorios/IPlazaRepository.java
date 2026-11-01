@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol.repositorios;
 
 import es.safareyes.parkcontrol.dtos.OcupacionPlanta;
+import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
 import es.safareyes.parkcontrol.dtos.OcupacionPorTipo;
 import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
@@ -38,6 +39,14 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
             "sum(case when p.tipo = es.safareyes.parkcontrol.modelos.TipoPlaza.ELECTRICA then 1 else 0 end)) " +
             "from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.OCUPADA")
     List<OcupacionPorTipo> opcupacionPorTipos();
+
+    @Query(value = "select " +
+            "new es.safareyes.parkcontrol.dtos.OcupacionPorPlanta(" +
+            "sum(case when p.planta = 0 then 1 else 0 end), " +
+            "sum(case when p.planta = -1 then 1 else 0 end)," +
+            "sum(case when p.planta = -2 then 1 else 0 end)) " +
+            "from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.OCUPADA")
+    OcupacionPorPlanta ocupacionPorPlanta();
 
     @Query(value = "select count(p) from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.OCUPADA")
     List<TotalPlazasOcupadas> totalPlazasOcupadas();
