@@ -26,7 +26,7 @@ public class PlazaController {
         return service.consultarPlazas(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
     };
 
-    @GetMapping("total")
+    @GetMapping("/total")
     public Long consultarPlazasTotales() {
         return service.consultarPlazasTotales();
     }
