@@ -3,10 +3,10 @@ package es.safareyes.parkcontrol.controladores;
 import es.safareyes.parkcontrol.dtos.request.RegistroRequest;
 import es.safareyes.parkcontrol.dtos.response.LoginResponse;
 import es.safareyes.parkcontrol.dtos.request.LoginRequest;
-import es.safareyes.parkcontrol.modelos.Usuario;
+import es.safareyes.parkcontrol.servicios.AuthService;
 import es.safareyes.parkcontrol.servicios.RegistroService;
-import es.safareyes.parkcontrol.servicios.UsuarioService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,20 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
+    private final AuthService authService;
     private final RegistroService registroService;
-    private UsuarioService service;
-
-    public AuthController(RegistroService registroService) {
-        this.registroService = registroService;
-    }
 
     @PostMapping("/login")
-    public ResponseEntity<?>login(@RequestBody LoginRequest request) {
-        Usuario usuario = service.consultarUsuarioPorNombre(request.getEmail());
-
-        return ResponseEntity.ok(new LoginResponse("Hola"));
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        System.out.println(">>> LLEGÓ PETICIÓN A /auth/login con nombre: " + request.getNombre());
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")

@@ -8,10 +8,10 @@ import lombok.Data;
 @Data
 public class LoginRequest {
 
-    @NotBlank(message = "El email no puede estar vacío")
-    @NotNull(message = "El email no puede estar vacío")
-    @NotEmpty(message = "El email no puede estar vacío")
-    private String email;
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @NotNull(message = "El nombre no puede estar vacío")
+    @NotEmpty(message = "El nombre no puede estar vacío")
+    private String nombre;
 
     @NotBlank(message = "La contraseña no puede estar vacía")
     @NotNull(message = "La contraseña no puede estar vacía")

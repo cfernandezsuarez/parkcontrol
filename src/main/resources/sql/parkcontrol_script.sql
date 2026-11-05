@@ -136,16 +136,16 @@ INSERT INTO abonado (email, nombre, matricula, fecha_inicio, fecha_fin) VALUES
 
 -- 4. USUARIOS
 INSERT INTO parkcontrol.usuario (nombre, contrasenya, rol) VALUES
-    ('ana_lopez',      '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
-    ('bruno_garcia',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
-    ('carla_martin',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
-    ('david_ruiz',     '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
-    ('elena_sanz',     '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
-    ('fran_torres',    '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
-    ('gloria_vega',    '$2a$10$abcdefghijklmnopqrstuv...', 'ADMIN'),
-    ('hugo_blanco',    '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
-    ('irene_castro',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
-    ('javier_nieto',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO');
+    ('ana_lopez',      '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
+    ('bruno_garcia',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
+    ('carla_martin',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
+    ('david_ruiz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
+    ('elena_sanz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
+    ('fran_torres',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
+    ('gloria_vega',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ADMIN'),
+    ('hugo_blanco',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
+    ('irene_castro',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
+    ('javier_nieto',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO');
 -- 5. TICKETS HISTÓRICOS (Ya cerrados)
 -- Importante: Como es histórico, aquí sí rellenamos los campos NOT NULL (minutos, importe)
 INSERT INTO ticket (hora_entrada, hora_salida, minutos_totales, estado, importe, descuento, importe_descuento, matricula, id_tarifa, id_plaza) VALUES
