@@ -52,6 +52,7 @@ create table if not exists usuario (
     id serial primary key,
     nombre varchar not null,
     contrasenya varchar not null,
+    rol varchar not null default 'ABONADO',
     id_abonado int,
     constraint fk_usuario_abonado foreign key (id_abonado) references abonado(id)
 );
@@ -134,18 +135,17 @@ INSERT INTO abonado (email, nombre, matricula, fecha_inicio, fecha_fin) VALUES
     ('javier.nieto@email.com',  'Javier Nieto',   '8901BCD', '2024-10-01 00:00:00', '2025-09-30 23:59:59');
 
 -- 4. USUARIOS
-INSERT INTO usuario (nombre, contrasenya, id_abonado) VALUES
-    ('ana_lopez',      'pass_ana_2024',    1),
-    ('bruno_garcia',   'pass_bruno_2024',  2),
-    ('carla_martin',   'pass_carla_2024',  3),
-    ('david_ruiz',     'pass_david_2024',  4),
-    ('elena_sanz',     'pass_elena_2024',  5),
-    ('fran_torres',    'pass_fran_2024',   6),
-    ('gloria_vega',    'pass_gloria_2024', 7),
-    ('hugo_blanco',    'pass_hugo_2024',   8),
-    ('irene_castro',   'pass_irene_2024',  9),
-    ('javier_nieto',   'pass_javier_2024', 10);
-
+INSERT INTO parkcontrol.usuario (nombre, contrasenya, rol) VALUES
+    ('ana_lopez',      '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
+    ('bruno_garcia',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
+    ('carla_martin',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
+    ('david_ruiz',     '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
+    ('elena_sanz',     '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
+    ('fran_torres',    '$2a$10$abcdefghijklmnopqrstuv...', 'OPERADOR'),
+    ('gloria_vega',    '$2a$10$abcdefghijklmnopqrstuv...', 'ADMIN'),
+    ('hugo_blanco',    '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
+    ('irene_castro',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO'),
+    ('javier_nieto',   '$2a$10$abcdefghijklmnopqrstuv...', 'ABONADO');
 -- 5. TICKETS HISTÓRICOS (Ya cerrados)
 -- Importante: Como es histórico, aquí sí rellenamos los campos NOT NULL (minutos, importe)
 INSERT INTO ticket (hora_entrada, hora_salida, minutos_totales, estado, importe, descuento, importe_descuento, matricula, id_tarifa, id_plaza) VALUES
