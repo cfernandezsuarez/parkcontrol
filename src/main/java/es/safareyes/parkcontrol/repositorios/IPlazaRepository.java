@@ -50,4 +50,8 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
 
     @Query(value = "select count(p) from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.OCUPADA")
     List<TotalPlazasOcupadas> totalPlazasOcupadas();
+
+    List<Plaza> countPlazaByEstado(EstadoPlaza estado);
+
+    long countByEstado(EstadoPlaza estado);
 }

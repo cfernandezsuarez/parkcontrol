@@ -31,6 +31,11 @@ public class PlazaController {
         return service.consultarPlazasTotales();
     }
 
+    @GetMapping("/total/bloqueada")
+    public Long consultarPlazasBloqueadas() {
+        return service.consultarPlazasEnMantenimiento();
+    }
+
     @GetMapping("/ocupadas/total")
     public List<TotalPlazasOcupadas> consultarPlazasTotalesOcupadas() {
         return service.consultarPlazasTotalesOcupadas();
