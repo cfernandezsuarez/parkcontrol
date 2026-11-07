@@ -38,7 +38,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/plazas/total",
                                 "/plazas/ocupadas/**",
-                                "/plazas/disponibilidad"
+                                "/plazas/disponibilidad",
+                                "/plazas/total/planta"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

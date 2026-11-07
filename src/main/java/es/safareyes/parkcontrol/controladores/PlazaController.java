@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public class PlazaController {
     @GetMapping("/total/bloqueada")
     public Long consultarPlazasBloqueadas() {
         return service.consultarPlazasEnMantenimiento();
+    }
+
+    @GetMapping("/total/planta")
+    public Long consultarPlazasPorPlantaMaxima(@RequestParam Integer planta) {
+        return service.consultarPlazasPorPlantaMaxima(planta);
     }
 
     @GetMapping("/ocupadas/total")

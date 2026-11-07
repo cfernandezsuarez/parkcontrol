@@ -39,6 +39,10 @@ public class PlazaService {
         return repository.plazasLibresPorPlantaTipo(planta, tipoPlaza);
     }
 
+    public Long consultarPlazasPorPlantaMaxima(Integer planta) {
+        return repository.countByPlanta(planta);
+    }
+
     public Long consultarPlazasEnMantenimiento() {
         return repository.countByEstado(EstadoPlaza.BLOQUEADA);
     }

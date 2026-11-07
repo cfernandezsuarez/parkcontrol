@@ -54,4 +54,6 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
     List<Plaza> countPlazaByEstado(EstadoPlaza estado);
 
     long countByEstado(EstadoPlaza estado);
+
+    long countByPlanta(Integer planta);
 }
