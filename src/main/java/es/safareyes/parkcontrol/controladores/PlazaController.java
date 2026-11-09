@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.controladores;
 
+import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
 import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
 import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
@@ -8,10 +9,7 @@ import es.safareyes.parkcontrol.modelos.TipoPlaza;
 import es.safareyes.parkcontrol.servicios.PlazaService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +23,25 @@ public class PlazaController {
     @GetMapping
     public Page<Plaza> consultarPlazas(){
         return service.consultarPlazas(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
-    };
+    }
+
+    @PostMapping
+    public void crearNuevaPlaza(
+            @RequestParam(name = "numero") Integer numero,
+            @RequestParam(name = "planta") Integer planta,
+            @RequestParam(name = "tipo") TipoPlaza tipo,
+            @RequestParam(name = "estado") EstadoPlaza estado
+            ) {
+        CrearNuevaPlazaDTO plazaDTO = new CrearNuevaPlazaDTO(numero, planta, tipo, estado);
+        service.crearNuevaPlaza(plazaDTO);
+    }
+
+    @PatchMapping("/{id}/estado")
+    public String bloquearPlaza(@PathVariable(name = "id") Integer id) {
+        service.bloquearPlaza(id);
+        Plaza plaza = service.consultarPlazaPorId(id);
+        return plaza.getEstado() == EstadoPlaza.BLOQUEADA ? "La plaza ha sido bloqueada correctamente" : "La plaza ha sido desbloqueada correctamente";
+    }
 
     @GetMapping("/total")
     public Long consultarPlazasTotales() {

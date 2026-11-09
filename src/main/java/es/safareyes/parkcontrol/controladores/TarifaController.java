@@ -1,12 +1,13 @@
 package es.safareyes.parkcontrol.controladores;
 
+import es.safareyes.parkcontrol.dtos.CrearNuevaTarifaDTO;
 import es.safareyes.parkcontrol.modelos.Tarifa;
 import es.safareyes.parkcontrol.servicios.TarifaService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -15,6 +16,17 @@ import java.util.List;
 public class TarifaController {
 
     private TarifaService service;
+
+    @PostMapping
+    public void crearNuevaPlaza(
+            @RequestParam(name = "topeMaximo") Integer topeMaximo,
+            @RequestParam(name = "fecha")LocalDateTime fecha,
+            @RequestParam(name = "minCortesia") Integer minCortesia,
+            @RequestParam(name = "precio")BigDecimal precio
+            ) {
+        CrearNuevaTarifaDTO dto = new CrearNuevaTarifaDTO(topeMaximo, fecha, minCortesia, precio);
+        service.crearNuevaPlaza(dto);
+    }
 
     @GetMapping("/vigente")
     public List<Tarifa> tarifasVigor() {

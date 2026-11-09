@@ -35,6 +35,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/plazas/*/estado"
+                                ).hasAnyRole("ADMIN", "OPERADOR")
                         .requestMatchers(HttpMethod.GET,
                                 "/plazas/total",
                                 "/plazas/ocupadas/**",

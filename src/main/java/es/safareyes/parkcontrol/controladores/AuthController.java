@@ -24,7 +24,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        System.out.println(">>> LLEGÓ PETICIÓN A /auth/login con nombre: " + request.getNombre());
         return ResponseEntity.ok(authService.login(request));
     }
 

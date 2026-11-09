@@ -1,7 +1,9 @@
 package es.safareyes.parkcontrol.servicios;
 
+import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
 import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
 import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
+import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
@@ -12,12 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class PlazaService {
 
     private IPlazaRepository repository;
+
+    public Plaza consultarPlazaPorId(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new ElementoNoEncontrado("No se encuentra la plaza"));
+    }
 
     public Long consultarPlazasTotales() {
         return repository.count();
@@ -45,6 +52,28 @@ public class PlazaService {
 
     public Long consultarPlazasEnMantenimiento() {
         return repository.countByEstado(EstadoPlaza.BLOQUEADA);
+    }
+
+    public void crearNuevaPlaza(CrearNuevaPlazaDTO dto) {
+        Plaza plaza = new Plaza();
+        plaza.setNumero(dto.numero());
+        plaza.setPlanta(dto.planta());
+        plaza.setTipo(dto.tipo());
+        plaza.setEstado(dto.estado());
+        repository.save(plaza);
+    }
+
+    public void bloquearPlaza(Integer id) {
+        Plaza plaza = repository.findById(id)
+                .orElseThrow(() -> new ElementoNoEncontrado("No se encuentra la plaza"));
+        EstadoPlaza estadoBloqueado = EstadoPlaza.BLOQUEADA;
+        EstadoPlaza estadoLibre = EstadoPlaza.LIBRE;
+        if (plaza.getEstado().equals(estadoBloqueado)) {
+            plaza.setEstado(estadoLibre);
+        } else {
+            plaza.setEstado(estadoBloqueado);
+        }
+        repository.save(plaza);
     }
 
 }
