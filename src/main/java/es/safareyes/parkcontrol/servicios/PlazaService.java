@@ -105,7 +105,7 @@ public class PlazaService {
         EstadoPlaza estadoLibre = EstadoPlaza.LIBRE;
         if (plaza.getEstado().equals(estadoBloqueado)) {
             plaza.setEstado(estadoLibre);
-        } else {
+        } else if (plaza.getEstado().equals(estadoLibre)) {
             plaza.setEstado(estadoBloqueado);
         }
         repository.save(plaza);
