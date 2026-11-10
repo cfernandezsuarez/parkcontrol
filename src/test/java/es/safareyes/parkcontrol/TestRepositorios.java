@@ -104,14 +104,6 @@ public class TestRepositorios {
 
     }
 
-    // GET 16
-    @Test
-    public void ocupacionPlanta() {
-
-        List<OcupacionPlanta> plantasOcupadas = plazaRepository.ocupacionPlanta(EstadoTicket.ABIERTO);
-
-    }
-
     @Test
     public void ocupacionTotales() {
 
@@ -119,27 +111,4 @@ public class TestRepositorios {
 
     }
 
-    // GET EXTRA
-    @Test
-    public void ocupacionPlazasTipo() {
-
-        List<OcupacionPorTipo> ocupacionPorTipos = plazaRepository.opcupacionPorTipos();
-
-    }
-
-    // GET EXTRA
-    @Test
-    public void ocupacionPlazasPlanta() {
-
-        OcupacionPorPlanta ocupacionPorPlanta = plazaRepository.ocupacionPorPlanta();
-
-    }
-
-    // GET EXTRA
-    @Test
-    public void ocupacionPlazasTotal() {
-
-        List<TotalPlazasOcupadas> ocupacionPlazasTotal = plazaRepository.totalPlazasOcupadas();
-
-    }
 }

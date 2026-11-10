@@ -18,14 +18,14 @@ public class TarifaController {
     private TarifaService service;
 
     @PostMapping
-    public void crearNuevaPlaza(
+    public void crearNuevaTarifa(
             @RequestParam(name = "topeMaximo") Integer topeMaximo,
             @RequestParam(name = "fecha")LocalDateTime fecha,
             @RequestParam(name = "minCortesia") Integer minCortesia,
             @RequestParam(name = "precio")BigDecimal precio
             ) {
         CrearNuevaTarifaDTO dto = new CrearNuevaTarifaDTO(topeMaximo, fecha, minCortesia, precio);
-        service.crearNuevaPlaza(dto);
+        service.crearNuevaTarifa(dto);
     }
 
     @GetMapping("/vigente")

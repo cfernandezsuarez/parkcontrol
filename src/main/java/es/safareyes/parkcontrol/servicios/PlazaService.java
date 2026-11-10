@@ -1,8 +1,7 @@
 package es.safareyes.parkcontrol.servicios;
 
 import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
-import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
-import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
+import es.safareyes.parkcontrol.dtos.PlazasOcupacionDTO;
 import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
@@ -14,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Predicate;
 
 @Service
 @AllArgsConstructor
@@ -30,16 +29,52 @@ public class PlazaService {
         return repository.count();
     }
 
-    public List<TotalPlazasOcupadas> consultarPlazasTotalesOcupadas() {
-        return repository.totalPlazasOcupadas();
-    }
-
     public Page<Plaza> consultarPlazas(Integer planta, TipoPlaza tipoPlaza, EstadoPlaza estadoPlaza) {
         return repository.findAllByPlantaAndTipoAndEstado(planta, tipoPlaza, estadoPlaza, PageRequest.of(0, 10));
     }
 
-    public OcupacionPorPlanta consultarOcupacionPorPlanta() {
-        return repository.ocupacionPorPlanta();
+    public PlazasOcupacionDTO consultarPlazasOcupacion() {
+        List<Plaza> plazas = repository.findAll();
+        return new PlazasOcupacionDTO(
+                calcularEstadistica(plazas),
+                calcularPorTipo(plazas),
+                new PlazasOcupacionDTO.Planta(
+                        calcularPlanta(plazas, 0),
+                        calcularPlanta(plazas, -1),
+                        calcularPlanta(plazas, -2)
+                )
+        );
+    }
+
+    private PlazasOcupacionDTO.Resumen calcularPlanta(List<Plaza> plazas, int numeroPlanta) {
+        List<Plaza> plazasPlanta = plazas.stream()
+                .filter(plaza -> plaza.getPlanta().equals(numeroPlanta))
+                .toList();
+        PlazasOcupacionDTO.Estadistica estadistica = calcularEstadistica(plazasPlanta);
+        return new PlazasOcupacionDTO.Resumen(
+                estadistica.libres(), estadistica.ocupadas(), estadistica.bloqueadas(), estadistica.capacidad(),
+                calcularPorTipo(plazasPlanta)
+        );
+    }
+
+    private PlazasOcupacionDTO.Tipo calcularPorTipo(List<Plaza> plazas) {
+        return new PlazasOcupacionDTO.Tipo(
+                calcularEstadistica(plazas, plaza -> plaza.getTipo() == TipoPlaza.NORMAL),
+                calcularEstadistica(plazas, plaza -> plaza.getTipo() == TipoPlaza.PMR),
+                calcularEstadistica(plazas, plaza -> plaza.getTipo() == TipoPlaza.ELECTRICA)
+        );
+    }
+
+    private PlazasOcupacionDTO.Estadistica calcularEstadistica(List<Plaza> plazas) {
+        return calcularEstadistica(plazas, plaza -> true);
+    }
+
+    private PlazasOcupacionDTO.Estadistica calcularEstadistica(List<Plaza> plazas, Predicate<Plaza> filtro) {
+        List<Plaza> filtradas = plazas.stream().filter(filtro).toList();
+        long ocupadas = filtradas.stream().filter(plaza -> plaza.getEstado() == EstadoPlaza.OCUPADA).count();
+        long bloqueadas = filtradas.stream().filter(plaza -> plaza.getEstado() == EstadoPlaza.BLOQUEADA).count();
+        long capacidad = filtradas.size();
+        return new PlazasOcupacionDTO.Estadistica(capacidad - ocupadas - bloqueadas, ocupadas, bloqueadas, capacidad);
     }
 
     public List<Plaza> consultarPlazasDisponibles(Integer planta, TipoPlaza tipoPlaza) {
@@ -74,6 +109,10 @@ public class PlazaService {
             plaza.setEstado(estadoBloqueado);
         }
         repository.save(plaza);
+    }
+
+    public List<Plaza> consultarPlazasPorPlanta(Integer planta) {
+        return repository.findByPlantaOrderByNumeroAsc(planta);
     }
 
 }

@@ -38,11 +38,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH,
                                 "/plazas/*/estado"
                                 ).hasAnyRole("ADMIN", "OPERADOR")
+                        .requestMatchers(HttpMethod.POST,
+                                "/plazas", "/tarifas"
+                                ).hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
                                 "/plazas/total",
-                                "/plazas/ocupadas/**",
+                                "/plazas/ocupacion",
                                 "/plazas/disponibilidad",
-                                "/plazas/total/planta"
+                                "/plazas/total/planta",
+                                "/plazas/planta/{planta}"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

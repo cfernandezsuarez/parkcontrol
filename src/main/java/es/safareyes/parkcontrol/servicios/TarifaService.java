@@ -20,7 +20,7 @@ public class TarifaService {
         return repository.tarifaVigor();
     }
 
-    public void crearNuevaPlaza(CrearNuevaTarifaDTO dto) {
+    public void crearNuevaTarifa(CrearNuevaTarifaDTO dto) {
         Tarifa tarifa = new Tarifa();
         tarifa.setTopeMaximo(dto.topeMaximo());
         tarifa.setFecha(dto.fecha());

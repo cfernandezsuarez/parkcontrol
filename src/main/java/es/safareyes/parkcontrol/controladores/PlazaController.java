@@ -1,8 +1,7 @@
 package es.safareyes.parkcontrol.controladores;
 
 import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
-import es.safareyes.parkcontrol.dtos.OcupacionPorPlanta;
-import es.safareyes.parkcontrol.dtos.TotalPlazasOcupadas;
+import es.safareyes.parkcontrol.dtos.PlazasOcupacionDTO;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
@@ -21,8 +20,12 @@ public class PlazaController {
     private PlazaService service;
 
     @GetMapping
-    public Page<Plaza> consultarPlazas(){
-        return service.consultarPlazas(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA);
+    public Page<Plaza> consultarPlazas(
+            @RequestParam(name = "planta") Integer planta,
+            @RequestParam(name = "tipo") TipoPlaza tipo,
+            @RequestParam(name = "estado") EstadoPlaza estado
+            ){
+        return service.consultarPlazas(planta, tipo, estado);
     }
 
     @PostMapping
@@ -58,19 +61,19 @@ public class PlazaController {
         return service.consultarPlazasPorPlantaMaxima(planta);
     }
 
-    @GetMapping("/ocupadas/total")
-    public List<TotalPlazasOcupadas> consultarPlazasTotalesOcupadas() {
-        return service.consultarPlazasTotalesOcupadas();
-    }
-
-    @GetMapping("/ocupadas/planta")
-    public OcupacionPorPlanta ocupacionPorPlanta() {
-        return service.consultarOcupacionPorPlanta();
+    @GetMapping("/ocupacion")
+    public PlazasOcupacionDTO consultarPlazasOcupacion() {
+        return service.consultarPlazasOcupacion();
     }
 
     @GetMapping("/disponibilidad")
     public List<Plaza> consultarPlazasDisponibles(){
         return service.consultarPlazasDisponibles(1, TipoPlaza.NORMAL);
     };
+
+    @GetMapping("/planta/{planta}")
+    public List<Plaza> consultarPlazasPorPlanta(@PathVariable Integer planta) {
+        return service.consultarPlazasPorPlanta(planta);
+    }
 
 }
