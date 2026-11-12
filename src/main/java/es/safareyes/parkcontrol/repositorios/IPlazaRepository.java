@@ -23,6 +23,13 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
             @Param("planta") Integer planta,
             @Param("tipoPlaza") TipoPlaza tipoPlaza);
 
+    @Query(value = "SELECT p FROM Plaza p WHERE p.estado = :estado AND p.tipo = :tipo ORDER BY p.planta DESC, p.numero ASC")
+    List<Plaza> plazasLibresPorTipo(
+            @Param("estado") EstadoPlaza estado,
+            @Param("tipo") TipoPlaza tipo,
+            Pageable pageable
+    );
+
     List<Plaza> countPlazaByEstado(EstadoPlaza estado);
 
     long countByEstado(EstadoPlaza estado);

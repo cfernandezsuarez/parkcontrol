@@ -3,9 +3,7 @@ package es.safareyes.parkcontrol.repositorios;
 import es.safareyes.parkcontrol.dtos.DetalleTicketDescuento;
 import es.safareyes.parkcontrol.dtos.ImporteTicket;
 import es.safareyes.parkcontrol.dtos.RecaudacionDia;
-import es.safareyes.parkcontrol.modelos.Abonado;
-import es.safareyes.parkcontrol.modelos.EstadoTicket;
-import es.safareyes.parkcontrol.modelos.Ticket;
+import es.safareyes.parkcontrol.modelos.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,4 +40,5 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
             @Param("horaInicio") LocalDateTime horaInicio,
             @Param("horaFin") LocalDateTime horaFin);
 
+    boolean existsByMatriculaAndEstado(String matricula, EstadoTicket estado);
 }

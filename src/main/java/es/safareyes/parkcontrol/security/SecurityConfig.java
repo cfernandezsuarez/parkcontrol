@@ -41,6 +41,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/plazas", "/tarifas"
                                 ).hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,
+                                "/tickets/entrada"
+                                ).hasAnyRole("ADMIN", "OPERADOR")
+                        .requestMatchers(HttpMethod.GET,
+                                "/tarifas/vigente"
+                                ).hasAnyRole("ADMIN", "OPERADOR")
                         .requestMatchers(HttpMethod.GET,
                                 "/plazas/total",
                                 "/plazas/ocupacion",
