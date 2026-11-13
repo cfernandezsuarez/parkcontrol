@@ -57,7 +57,7 @@ public class TestRepositorios {
     @Test
     public void tarifaDisponible() {
 
-        List<Tarifa> tarifasVigor = tarifaRepositorio.tarifaVigor();
+        Optional<Tarifa[]> tarifasVigor = tarifaRepositorio.tarifaVigor();
 
     }
 

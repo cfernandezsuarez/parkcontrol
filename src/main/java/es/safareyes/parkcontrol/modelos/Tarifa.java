@@ -19,6 +19,9 @@ public class Tarifa {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "nombre")
+    private String nombre;
+
     @Column(name = "tope_maximo")
     private Integer topeMaximo;
 

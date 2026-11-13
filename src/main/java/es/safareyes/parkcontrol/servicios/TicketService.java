@@ -31,7 +31,7 @@ public class TicketService {
             throw new ConflictoMatricula("La matrícula ya tiene un ticket activo");
         }
 
-        Tarifa tarifa = tarifaRepository.findTarifaVigente(fechaEntrada)
+        Tarifa tarifa = tarifaRepository.findFirstByOrderByFechaDesc()
                 .orElseThrow(() -> new ReglaNegocio("No hay tarifa vigente"));
 
         TipoPlaza tipo = request.tipoPlaza() != null ? request.tipoPlaza() : TipoPlaza.NORMAL;
@@ -44,7 +44,7 @@ public class TicketService {
             throw new ReglaNegocio("No hay plazas libres del tipo " + tipo);
         }
 
-        Plaza plaza = plazasLibres.get(0);
+        Plaza plaza = plazasLibres.getFirst();
 
         plaza.setEstado(EstadoPlaza.OCUPADA);
         plazaRepository.save(plaza);

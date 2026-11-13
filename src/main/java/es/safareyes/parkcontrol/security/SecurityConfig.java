@@ -45,15 +45,15 @@ public class SecurityConfig {
                                 "/tickets/entrada"
                                 ).hasAnyRole("ADMIN", "OPERADOR")
                         .requestMatchers(HttpMethod.GET,
-                                "/tarifas/vigente"
-                                ).hasAnyRole("ADMIN", "OPERADOR")
-                        .requestMatchers(HttpMethod.GET,
                                 "/plazas/total",
                                 "/plazas/ocupacion",
                                 "/plazas/disponibilidad",
                                 "/plazas/total/planta",
                                 "/plazas/planta/{planta}"
                                 ).permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/tarifas/vigente"
+                                ).hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

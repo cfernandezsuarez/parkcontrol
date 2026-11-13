@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,12 +17,13 @@ public class TarifaService {
 
     private ITarifaRepositorio repository;
 
-    public List<Tarifa> tarifasVigor() {
+    public Optional<Tarifa[]> tarifasVigor() {
         return repository.tarifaVigor();
     }
 
     public void crearNuevaTarifa(CrearNuevaTarifaDTO dto) {
         Tarifa tarifa = new Tarifa();
+        tarifa.setNombre(dto.nombre());
         tarifa.setTopeMaximo(dto.topeMaximo());
         tarifa.setFecha(dto.fecha());
         tarifa.setMinCortesia(dto.minCortesia());

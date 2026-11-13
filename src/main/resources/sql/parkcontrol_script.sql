@@ -1,5 +1,6 @@
 create table if not exists tarifa (
     id serial primary key,
+    nombre varchar,
     tope_maximo int,
     fecha timestamp not null default current_timestamp,
     min_cortesia int not null,
@@ -66,12 +67,12 @@ create table if not exists ticket_abonado (
 );
 
 -- 1. TARIFAS
-INSERT INTO tarifa (tope_maximo, min_cortesia, precio) VALUES
-    (60,   15, 1.50),
-    (120,  20, 2.00),
-    (240,  30, 3.50),
-    (480,  45, 5.00),
-    (1440, 60, 8.00);
+INSERT INTO tarifa (nombre, tope_maximo, min_cortesia, precio) VALUES
+    ('Básica', 60,   15, 1.50),
+    ('Estándar', 120,  20, 2.00),
+    ('Extendida', 240,  30, 3.50),
+    ('Jornada', 480,  45, 5.00),
+    ('Día', 1440, 60, 8.00);
 
 -- 2. PLAZAS (200 en total: 28 ocupadas, 10 bloqueadas, 162 libres)
 INSERT INTO plaza (numero, planta, tipo, estado) VALUES
@@ -135,7 +136,7 @@ INSERT INTO abonado (email, nombre, matricula, fecha_inicio, fecha_fin) VALUES
     ('javier.nieto@email.com',  'Javier Nieto',   '8901BCD', '2024-10-01 00:00:00', '2025-09-30 23:59:59');
 
 -- 4. USUARIOS
-INSERT INTO parkcontrol.usuario (nombre, contrasenya, rol) VALUES
+INSERT INTO usuario (nombre, contrasenya, rol) VALUES
     ('ana_lopez',      '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
     ('bruno_garcia',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
     ('carla_martin',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
@@ -146,6 +147,7 @@ INSERT INTO parkcontrol.usuario (nombre, contrasenya, rol) VALUES
     ('hugo_blanco',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
     ('irene_castro',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
     ('javier_nieto',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO');
+
 -- 5. TICKETS HISTÓRICOS (Ya cerrados)
 -- Importante: Como es histórico, aquí sí rellenamos los campos NOT NULL (minutos, importe)
 INSERT INTO ticket (hora_entrada, hora_salida, minutos_totales, estado, importe, descuento, importe_descuento, matricula, id_tarifa, id_plaza) VALUES
@@ -204,4 +206,3 @@ INSERT INTO ticket_abonado (id_ticket, id_abonado) VALUES
     ( 3,  3),  -- 9012GHI → Carla Martín
     ( 4,  4),  -- 3456JKL → David Ruiz
     ( 5,  5);  -- 7890MNO → Elena Sanz
-

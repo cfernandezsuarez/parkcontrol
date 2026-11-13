@@ -13,9 +13,8 @@ import java.util.Optional;
 @Repository
 public interface ITarifaRepositorio extends JpaRepository<Tarifa, Integer> {
 
-    @Query(value = "select ti.tarifa from Ticket ti where ti.estado = EstadoTicket.ABIERTO")
-    List<Tarifa> tarifaVigor();
+    @Query(value = "SELECT t FROM Tarifa t ORDER BY t.fecha DESC")
+    Optional<Tarifa[]> tarifaVigor();
 
-    @Query(value = "SELECT t FROM Tarifa t WHERE t.fecha <= :fecha ORDER BY t.fecha DESC")
-    Optional<Tarifa> findTarifaVigente(@Param("fecha") LocalDateTime fecha);
+    Optional<Tarifa> findFirstByOrderByFechaDesc();
 }

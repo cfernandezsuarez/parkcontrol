@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tarifas")
@@ -19,17 +20,18 @@ public class TarifaController {
 
     @PostMapping
     public void crearNuevaTarifa(
+            @RequestParam(name = "nombre") String nombre,
             @RequestParam(name = "topeMaximo") Integer topeMaximo,
             @RequestParam(name = "fecha")LocalDateTime fecha,
             @RequestParam(name = "minCortesia") Integer minCortesia,
             @RequestParam(name = "precio")BigDecimal precio
             ) {
-        CrearNuevaTarifaDTO dto = new CrearNuevaTarifaDTO(topeMaximo, fecha, minCortesia, precio);
+        CrearNuevaTarifaDTO dto = new CrearNuevaTarifaDTO(nombre, topeMaximo, fecha, minCortesia, precio);
         service.crearNuevaTarifa(dto);
     }
 
     @GetMapping("/vigente")
-    public List<Tarifa> tarifasVigor() {
+    public Optional<Tarifa[]> tarifasVigor() {
         return service.tarifasVigor();
     }
 }
