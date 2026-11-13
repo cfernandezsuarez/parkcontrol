@@ -1,15 +1,19 @@
 package es.safareyes.parkcontrol.servicios;
 
+import es.safareyes.parkcontrol.dtos.response.TicketAbonadoResponse;
 import es.safareyes.parkcontrol.exceptions.ConflictoMatricula;
+import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
 import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.*;
 import es.safareyes.parkcontrol.repositorios.IPlazaRepository;
 import es.safareyes.parkcontrol.repositorios.ITarifaRepositorio;
 import es.safareyes.parkcontrol.repositorios.ITicketRepository;
 import es.safareyes.parkcontrol.dtos.request.TicketEntradaRequest;
+import es.safareyes.parkcontrol.repositorios.IUsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +26,7 @@ public class TicketService {
     private ITicketRepository repository;
     private ITarifaRepositorio tarifaRepository;
     private IPlazaRepository plazaRepository;
+    private IUsuarioRepository usuarioRepository;
 
     public String registrarEntrada(TicketEntradaRequest request) {
         String matricula = request.matricula().toUpperCase();
@@ -65,4 +70,23 @@ public class TicketService {
         return "Ticket creado correctamente para la matrícula " + matricula;
     }
 
+    @Transactional(readOnly = true)
+    public List<TicketAbonadoResponse> obtenerMisTickets(String nombreUsuario) {
+
+        Usuario usuario = usuarioRepository.findByNombre(nombreUsuario)
+                .orElseThrow(() -> new ElementoNoEncontrado("Usuario no encontrado"));
+
+        return repository.ticketsPorIdUsuario(usuario.getId()).stream()
+            .map(t -> new TicketAbonadoResponse(
+                t.getId(),
+                t.getMatricula(),
+                t.getHoraEntrada(),
+                t.getHoraSalida(),
+                t.getMinutosTotales(),
+                t.getImporte(),
+                t.getEstado(),
+                t.getPlaza() != null ? t.getPlaza().getNumero() : null
+            ))
+            .toList();
+    }
 }

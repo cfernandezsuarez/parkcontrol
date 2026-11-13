@@ -136,17 +136,17 @@ INSERT INTO abonado (email, nombre, matricula, fecha_inicio, fecha_fin) VALUES
     ('javier.nieto@email.com',  'Javier Nieto',   '8901BCD', '2024-10-01 00:00:00', '2025-09-30 23:59:59');
 
 -- 4. USUARIOS
-INSERT INTO usuario (nombre, contrasenya, rol) VALUES
-    ('ana_lopez',      '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
-    ('bruno_garcia',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
-    ('carla_martin',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
-    ('david_ruiz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
-    ('elena_sanz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
-    ('fran_torres',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR'),
-    ('gloria_vega',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ADMIN'),
-    ('hugo_blanco',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
-    ('irene_castro',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO'),
-    ('javier_nieto',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO');
+INSERT INTO usuario (nombre, contrasenya, rol, id_abonado) VALUES
+    ('ana_lopez',      '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO',  1),
+    ('bruno_garcia',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO',  2),
+    ('carla_martin',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO',  3),
+    ('david_ruiz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR', 4),
+    ('elena_sanz',     '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR', 5),
+    ('fran_torres',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'OPERADOR', 6),
+    ('gloria_vega',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ADMIN',    7),
+    ('hugo_blanco',    '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO',  8),
+    ('irene_castro',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO',  9),
+    ('javier_nieto',   '$2a$10$8.Oq4vX2r4J5Q1l2k3N4uO5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0', 'ABONADO', 10);
 
 -- 5. TICKETS HISTÓRICOS (Ya cerrados)
 -- Importante: Como es histórico, aquí sí rellenamos los campos NOT NULL (minutos, importe)

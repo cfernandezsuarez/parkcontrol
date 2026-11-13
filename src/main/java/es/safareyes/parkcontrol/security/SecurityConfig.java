@@ -31,33 +31,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.PATCH,
-                                "/plazas/*/estado"
-                                ).hasAnyRole("ADMIN", "OPERADOR")
-                        .requestMatchers(HttpMethod.POST,
-                                "/plazas", "/tarifas"
-                                ).hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST,
-                                "/tickets/entrada"
-                                ).hasAnyRole("ADMIN", "OPERADOR")
-                        .requestMatchers(HttpMethod.GET,
-                                "/plazas/total",
-                                "/plazas/ocupacion",
-                                "/plazas/disponibilidad",
-                                "/plazas/total/planta",
-                                "/plazas/planta/{planta}"
-                                ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/tarifas/vigente"
-                                ).hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH,
+                    "/plazas/*/estado"
+                    ).hasAnyRole("ADMIN", "OPERADOR")
+                .requestMatchers(HttpMethod.POST,
+                    "/plazas", "/tarifas"
+                    ).hasAnyRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,
+                    "/tickets/entrada"
+                    ).hasAnyRole("ADMIN", "OPERADOR")
+                .requestMatchers(HttpMethod.GET,
+                    "/plazas/total",
+                    "/plazas/ocupacion",
+                    "/plazas/disponibilidad",
+                    "/plazas/total/planta",
+                    "/plazas/planta/{planta}"
+                    ).permitAll()
+                .requestMatchers(HttpMethod.GET,
+                    "/tarifas/vigente",
+                    "/tickets/mis-tickets"
+                    ).hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

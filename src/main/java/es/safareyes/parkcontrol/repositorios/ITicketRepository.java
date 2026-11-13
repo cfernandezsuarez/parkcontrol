@@ -35,10 +35,13 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
     @Query("select t.id, t.matricula, t.importe, t.importe - coalesce(t.importeDescuento, 0) from Abonado a join a.ticket t where a.id = :idAbonado order by t.id")
     List<DetalleTicketDescuento> ticketsDescuentos(@Param("idAbonado")Integer id);
 
-    @Query("select row_number() over (order by date_trunc('day', t.horaSalida)) as dia, sum(t.importe) as importe_total from Ticket t where t.horaSalida >= :horaInicio and t.horaSalida <= :horaFin group by date_trunc('day', t.horaSalida) ")
+    @Query(value = "select row_number() over (order by date_trunc('day', t.horaSalida)) as dia, sum(t.importe) as importe_total from Ticket t where t.horaSalida >= :horaInicio and t.horaSalida <= :horaFin group by date_trunc('day', t.horaSalida) ")
     List<RecaudacionDia> recaudacionPorDia(
             @Param("horaInicio") LocalDateTime horaInicio,
             @Param("horaFin") LocalDateTime horaFin);
 
     boolean existsByMatriculaAndEstado(String matricula, EstadoTicket estado);
+
+    @Query(value = "SELECT t.* FROM parkcontrol.ticket t JOIN parkcontrol.ticket_abonado ta ON t.id = ta.id_ticket JOIN parkcontrol.abonado a ON ta.id_abonado = a.id JOIN parkcontrol.usuario u ON u.id_abonado = a.id WHERE u.id = :id", nativeQuery = true)
+    List<Ticket> ticketsPorIdUsuario(@Param("id") Integer id);
 }
