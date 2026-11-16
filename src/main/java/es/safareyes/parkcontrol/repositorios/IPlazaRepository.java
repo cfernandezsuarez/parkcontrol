@@ -3,8 +3,10 @@ package es.safareyes.parkcontrol.repositorios;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,6 +25,7 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
             @Param("planta") Integer planta,
             @Param("tipoPlaza") TipoPlaza tipoPlaza);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "SELECT p FROM Plaza p WHERE p.estado = :estado AND p.tipo = :tipo ORDER BY p.planta DESC, p.numero ASC")
     List<Plaza> plazasLibresPorTipo(
             @Param("estado") EstadoPlaza estado,

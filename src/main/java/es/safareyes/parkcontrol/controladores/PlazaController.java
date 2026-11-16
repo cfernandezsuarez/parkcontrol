@@ -19,6 +19,7 @@ public class PlazaController {
 
     private PlazaService service;
 
+    // GET 1
     @GetMapping
     public Page<Plaza> consultarPlazas(
             @RequestParam(name = "planta") Integer planta,
@@ -28,6 +29,7 @@ public class PlazaController {
         return service.consultarPlazas(planta, tipo, estado);
     }
 
+    // POST 3
     @PostMapping
     public void crearNuevaPlaza(
             @RequestParam(name = "numero") Integer numero,
@@ -39,6 +41,7 @@ public class PlazaController {
         service.crearNuevaPlaza(plazaDTO);
     }
 
+    // PATCH 4
     @PatchMapping("/{id}/estado")
     public String bloquearPlaza(@PathVariable(name = "id") Integer id) {
         service.bloquearPlaza(id);
@@ -66,9 +69,13 @@ public class PlazaController {
         return service.consultarPlazasOcupacion();
     }
 
+    // GET 2
     @GetMapping("/disponibilidad")
-    public List<Plaza> consultarPlazasDisponibles(){
-        return service.consultarPlazasDisponibles(1, TipoPlaza.NORMAL);
+    public List<Plaza> consultarPlazasDisponibles(
+            @RequestParam Integer planta,
+            @RequestParam TipoPlaza tipo
+            ){
+        return service.consultarPlazasDisponibles(planta, tipo);
     };
 
     @GetMapping("/planta/{planta}")

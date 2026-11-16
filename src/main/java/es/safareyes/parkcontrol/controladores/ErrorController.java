@@ -1,6 +1,9 @@
 package es.safareyes.parkcontrol.controladores;
 
 import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
+import es.safareyes.parkcontrol.exceptions.MatriculaInvalida;
+import es.safareyes.parkcontrol.exceptions.PromocionRepetida;
+import es.safareyes.parkcontrol.exceptions.SinPlazasLibres;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -30,6 +33,21 @@ public class ErrorController {
                 "Datos no válidos", "Revisa los campos indicados");
         problema.setProperty("errores", errores);
         return problema;
+    }
+
+    @ExceptionHandler(MatriculaInvalida.class)
+    public ProblemDetail matriculaInvalida(MatriculaInvalida e) {
+        return construir(HttpStatus.valueOf(409), "Regla de negocio no cumplida", e.getMessage());
+    }
+
+    @ExceptionHandler(SinPlazasLibres.class)
+    public ProblemDetail plazasLibres(SinPlazasLibres e) {
+        return construir(HttpStatus.valueOf(422), "Regla de negocio no cumplida", e.getMessage());
+    }
+
+    @ExceptionHandler(PromocionRepetida.class)
+    public ProblemDetail promocionRepetida(PromocionRepetida e) {
+        return construir(HttpStatus.valueOf(409), "Regla de negocio no cumplida", e.getMessage());
     }
 
     private ProblemDetail construir(HttpStatus estado, String titulo, String detalle) {

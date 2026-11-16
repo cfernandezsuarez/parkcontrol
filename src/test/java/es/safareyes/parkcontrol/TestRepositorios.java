@@ -10,9 +10,6 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +54,7 @@ public class TestRepositorios {
     @Test
     public void tarifaDisponible() {
 
-        Optional<Tarifa[]> tarifasVigor = tarifaRepositorio.tarifaVigor();
+        Optional<Tarifa> tarifasVigor = tarifaRepositorio.tarifaVigente();
 
     }
 

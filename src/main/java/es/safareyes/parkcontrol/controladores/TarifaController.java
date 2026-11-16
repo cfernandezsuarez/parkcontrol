@@ -4,6 +4,7 @@ import es.safareyes.parkcontrol.dtos.CrearNuevaTarifaDTO;
 import es.safareyes.parkcontrol.modelos.Tarifa;
 import es.safareyes.parkcontrol.servicios.TarifaService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ public class TarifaController {
 
     private TarifaService service;
 
+    // POST 6
     @PostMapping
     public void crearNuevaTarifa(
             @RequestParam(name = "nombre") String nombre,
@@ -30,8 +32,9 @@ public class TarifaController {
         service.crearNuevaTarifa(dto);
     }
 
+    // GET 5
     @GetMapping("/vigente")
-    public Optional<Tarifa[]> tarifasVigor() {
-        return service.tarifasVigor();
+    public ResponseEntity<Tarifa> tarifasVigor() {
+        return ResponseEntity.ok(service.tarifasVigor());
     }
 }

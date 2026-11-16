@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
@@ -44,4 +45,7 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
 
     @Query(value = "SELECT t.* FROM parkcontrol.ticket t JOIN parkcontrol.ticket_abonado ta ON t.id = ta.id_ticket JOIN parkcontrol.abonado a ON ta.id_abonado = a.id JOIN parkcontrol.usuario u ON u.id_abonado = a.id WHERE u.id = :id", nativeQuery = true)
     List<Ticket> ticketsPorIdUsuario(@Param("id") Integer id);
+
+    @Query("SELECT t FROM Ticket t WHERE t.matricula = :matricula AND t.estado = EstadoTicket.ABIERTO")
+    Optional<Ticket> findByMatriculaAndEstado(@Param("matricula") String matricula, @Param("estado") EstadoTicket estado);
 }

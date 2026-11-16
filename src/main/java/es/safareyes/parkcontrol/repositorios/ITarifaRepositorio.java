@@ -7,14 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ITarifaRepositorio extends JpaRepository<Tarifa, Integer> {
 
-    @Query(value = "SELECT t FROM Tarifa t ORDER BY t.fecha DESC")
-    Optional<Tarifa[]> tarifaVigor();
+    @Query(value = "SELECT t FROM Tarifa t WHERE t.fecha <= :fecha ORDER BY t.fecha DESC LIMIT 1")
+    Optional<Tarifa> tarifaVigente(@Param("fecha") LocalDateTime fecha);
 
-    Optional<Tarifa> findFirstByOrderByFechaDesc();
 }

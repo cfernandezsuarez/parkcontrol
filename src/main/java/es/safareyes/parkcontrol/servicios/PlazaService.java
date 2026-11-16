@@ -103,6 +103,11 @@ public class PlazaService {
                 .orElseThrow(() -> new ElementoNoEncontrado("No se encuentra la plaza"));
         EstadoPlaza estadoBloqueado = EstadoPlaza.BLOQUEADA;
         EstadoPlaza estadoLibre = EstadoPlaza.LIBRE;
+        EstadoPlaza estadoOcupada = EstadoPlaza.OCUPADA;
+
+        // RN-09
+        if (plaza.getEstado().equals(estadoOcupada)) return;
+
         if (plaza.getEstado().equals(estadoBloqueado)) {
             plaza.setEstado(estadoLibre);
         } else if (plaza.getEstado().equals(estadoLibre)) {
