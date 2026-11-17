@@ -19,9 +19,11 @@ import java.util.Optional;
 @Repository
 public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
 
+    // GET 8
     @Query("select t.id, t.importe from Ticket t where t.matricula = :matricula and t.estado = EstadoTicket.ABIERTO")
     List<ImporteTicket> importeTicketAbierto(@Param("matricula") String matricula);
 
+    // GET 11
     @Query("select t from Ticket t where :abonado member of t.abonado and (:estado is null or t.estado = :estado) and (:precio1 is null or t.importe >= :precio1) and (:precio2 is null or t.importe <= :precio2) and (:minutos1 is null or t.minutosTotales >= :minutos1) and (:minutos2 is null or t.minutosTotales >= :minutos2)")
     Page<Ticket> ticketsPorAbonado(
             @Param("abonado") Abonado abonado,
@@ -33,9 +35,11 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
             Pageable pageable
             );
 
+    // GET 12
     @Query("select t.id, t.matricula, t.importe, t.importe - coalesce(t.importeDescuento, 0) from Abonado a join a.ticket t where a.id = :idAbonado order by t.id")
     List<DetalleTicketDescuento> ticketsDescuentos(@Param("idAbonado")Integer id);
 
+    // GET 15
     @Query(value = "select row_number() over (order by date_trunc('day', t.horaSalida)) as dia, sum(t.importe) as importe_total from Ticket t where t.horaSalida >= :horaInicio and t.horaSalida <= :horaFin group by date_trunc('day', t.horaSalida) ")
     List<RecaudacionDia> recaudacionPorDia(
             @Param("horaInicio") LocalDateTime horaInicio,

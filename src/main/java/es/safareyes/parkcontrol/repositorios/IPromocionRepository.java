@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface IPromocionRepository extends JpaRepository<Promocion, Integer> {
 
+    // GET 13
     @Query("select p from Promocion p")
     List<Promocion> catalogoPromociones();
 }

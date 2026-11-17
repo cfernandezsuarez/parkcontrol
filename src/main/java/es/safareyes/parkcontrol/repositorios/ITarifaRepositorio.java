@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ITarifaRepositorio extends JpaRepository<Tarifa, Integer> {
 
+    // GET 5
     @Query(value = "SELECT t FROM Tarifa t WHERE t.fecha <= :fecha ORDER BY t.fecha DESC LIMIT 1")
     Optional<Tarifa> tarifaVigente(@Param("fecha") LocalDateTime fecha);
 

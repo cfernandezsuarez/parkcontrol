@@ -18,8 +18,10 @@ import java.util.List;
 @Repository
 public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
 
+    // GET 1
     Page<Plaza> findAllByPlantaAndTipoAndEstado(Integer planta, TipoPlaza tipo, EstadoPlaza estado, Pageable pageable);
 
+    // GET 2
     @Query(value = "select p from Plaza p where p.estado = es.safareyes.parkcontrol.modelos.EstadoPlaza.LIBRE and p.planta = :planta and p.tipo = :tipoPlaza")
     List<Plaza> plazasLibresPorPlantaTipo(
             @Param("planta") Integer planta,
@@ -33,7 +35,8 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
             Pageable pageable
     );
 
-    List<Plaza> countPlazaByEstado(EstadoPlaza estado);
+    // GET EXTRA
+    Long countPlazaByEstado(EstadoPlaza estado);
 
     long countByEstado(EstadoPlaza estado);
 

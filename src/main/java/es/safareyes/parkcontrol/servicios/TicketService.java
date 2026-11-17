@@ -136,7 +136,7 @@ public class TicketService {
 
     @Transactional
     public String aplicarPromocion(Integer id, AplicarDescuentoRequest request) {
-
+        return "";
     }
 
     @Transactional(readOnly = true)

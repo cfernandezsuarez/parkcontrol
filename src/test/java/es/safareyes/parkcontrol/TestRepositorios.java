@@ -38,7 +38,7 @@ public class TestRepositorios {
     @Test
     public void listadoPlantaTipoEstado() {
 
-        Page<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(1, TipoPlaza.NORMAL, EstadoPlaza.OCUPADA, PageRequest.of(0, 10));
+        Page<Plaza> listaPlazas = plazaRepository.findAllByPlantaAndTipoAndEstado(0, TipoPlaza.NORMAL, EstadoPlaza.LIBRE, PageRequest.of(0, 10));
 
     }
 
@@ -46,7 +46,7 @@ public class TestRepositorios {
     @Test
     public void disponiblePlantaTipo() {
 
-        List<Plaza> listaPlazas = plazaRepository.plazasLibresPorPlantaTipo(1, TipoPlaza.NORMAL);
+        List<Plaza> listaPlazas = plazaRepository.plazasLibresPorPlantaTipo(0, TipoPlaza.NORMAL);
 
     }
 
@@ -54,7 +54,7 @@ public class TestRepositorios {
     @Test
     public void tarifaDisponible() {
 
-        Optional<Tarifa> tarifasVigor = tarifaRepositorio.tarifaVigente();
+        Optional<Tarifa> tarifasVigor = tarifaRepositorio.tarifaVigente(LocalDateTime.now());
 
     }
 
@@ -70,10 +70,10 @@ public class TestRepositorios {
     @Test
     public void listadoTicketPorAbonado() {
 
-        List<Abonado> abonado = abonadoRepository.findAllByNombreAndMatricula("Carlos Gómez", "1234BBB");
-        Abonado abonado1 = abonado.getFirst();
+        List<Abonado> abonados = abonadoRepository.findAllByNombreAndMatricula("Ana López", "1234ABC");
+        Abonado abonado = abonados.getFirst();
 
-        Page<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado1, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90, PageRequest.of(0, 10));
+        Page<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90, PageRequest.of(0, 10));
 
     }
 
@@ -97,10 +97,11 @@ public class TestRepositorios {
     @Test
     public void recaudacionDia() {
 
-        List<RecaudacionDia> recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2026, 3, 1, 0, 0), LocalDateTime.of(2026, 10, 5, 14, 0));
+        List<RecaudacionDia> recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 23, 59));
 
     }
 
+    // GET EXTRA
     @Test
     public void ocupacionTotales() {
 
@@ -108,4 +109,11 @@ public class TestRepositorios {
 
     }
 
+    // GET EXTRA
+    @Test
+    public void plazasPorEstado() {
+
+        Long plazas = plazaRepository.countPlazaByEstado(EstadoPlaza.LIBRE);
+
+    }
 }
