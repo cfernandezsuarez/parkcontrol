@@ -64,7 +64,7 @@ public class TestRepositorios {
     @Test
     public void importeTicketEstado() {
 
-        List<ImporteTicket> listaTickets = ticketRepository.importeTicketAbierto("1234ABC");
+        List<ImporteTicket> listaTickets = ticketRepository.importeTicketAbierto("1111AAA");
 
     }
 
@@ -75,7 +75,7 @@ public class TestRepositorios {
         List<Abonado> abonados = abonadoRepository.findAllByNombreAndMatricula("Ana López", "1234ABC");
         Abonado abonado = abonados.getFirst();
 
-        Page<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado, EstadoTicket.ABIERTO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90, PageRequest.of(0, 10));
+        Page<Ticket> tickets = ticketRepository.ticketsPorAbonado(abonado, EstadoTicket.CERRADO, BigDecimal.valueOf(2), BigDecimal.valueOf(4), 90, 90, PageRequest.of(0, 10));
 
     }
 
