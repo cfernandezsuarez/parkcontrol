@@ -17,4 +17,6 @@ public interface IAbonadoRepository extends JpaRepository<Abonado, Integer> {
     @Query(value = "SELECT COUNT(a) > 0 FROM Abonado a WHERE a.matricula = :matricula AND a.fechaInicio <= :fecha AND a.fechaFin >= :fecha")
     Boolean existsByMatriculaAndVigente(@Param("matricula") String matricula, @Param("fecha") LocalDateTime fecha);
 
+    Boolean existsByMatricula(String matricula);
+
 }
