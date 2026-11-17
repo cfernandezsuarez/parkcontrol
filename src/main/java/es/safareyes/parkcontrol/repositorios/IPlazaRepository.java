@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.repositorios;
 
+import es.safareyes.parkcontrol.dtos.response.OcupacionPlantaResponse;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
@@ -34,6 +35,15 @@ public interface IPlazaRepository extends JpaRepository<Plaza, Integer> {
             @Param("tipo") TipoPlaza tipo,
             Pageable pageable
     );
+
+    // GET 16
+    @Query("SELECT new es.safareyes.parkcontrol.dtos.response.OcupacionPlantaResponse(" +
+            "p.planta, COUNT(p.id), null) " +
+            "FROM Plaza p " +
+            "WHERE p.estado = 1 " +
+            "GROUP BY p.planta " +
+            "ORDER BY p.planta")
+    List<OcupacionPlantaResponse> ocupacionPorPlanta();
 
     // GET EXTRA
     Long countPlazaByEstado(EstadoPlaza estado);

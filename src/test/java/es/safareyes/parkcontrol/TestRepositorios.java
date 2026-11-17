@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol;
 
 import es.safareyes.parkcontrol.dtos.*;
+import es.safareyes.parkcontrol.dtos.response.OcupacionPlantaResponse;
 import es.safareyes.parkcontrol.dtos.response.RecaudacionDiaResponse;
 import es.safareyes.parkcontrol.modelos.*;
 import es.safareyes.parkcontrol.repositorios.*;
@@ -98,7 +99,26 @@ public class TestRepositorios {
     @Test
     public void recaudacionDia() {
 
-        RecaudacionDiaResponse recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 23, 59));
+        List<RecaudacionDiaResponse> recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 23, 59));
+
+    }
+
+    // GET 16
+    @Test
+    public void ocupacionPorPlantaYEstancia() {
+
+        List<OcupacionPlantaResponse> ocupacion = plazaRepository.ocupacionPorPlanta();
+
+        Double estanciaMedia = ticketRepository.estanciaMediaMinutos();
+
+        Long estanciaMediaInteger = estanciaMedia != null ? Math.round(estanciaMedia) : 0L;
+
+        List<OcupacionPlantaResponse> ocupacionConEstancia = ocupacion.stream().map(o -> new OcupacionPlantaResponse(
+                    o.planta(),
+                    o.ocupadas(),
+                    estanciaMediaInteger
+            )).toList();
+
 
     }
 

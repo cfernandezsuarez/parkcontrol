@@ -55,6 +55,10 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
             @Param("horaInicio") LocalDateTime horaInicio,
             @Param("horaFin") LocalDateTime horaFin);
 
+    // GET 16
+    @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (t.hora_salida - t.hora_entrada)) / 60) FROM parkcontrol.ticket t WHERE t.hora_salida IS NOT NULL", nativeQuery = true)
+    Double estanciaMediaMinutos();
+
     boolean existsByMatriculaAndEstado(String matricula, EstadoTicket estado);
 
     @Query(value = "SELECT t.* FROM parkcontrol.ticket t JOIN parkcontrol.ticket_abonado ta ON t.id = ta.id_ticket JOIN parkcontrol.abonado a ON ta.id_abonado = a.id JOIN parkcontrol.usuario u ON u.id_abonado = a.id WHERE u.id = :id", nativeQuery = true)
