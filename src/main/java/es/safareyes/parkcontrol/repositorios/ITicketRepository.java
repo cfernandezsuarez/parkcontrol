@@ -24,7 +24,7 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
     List<ImporteTicket> importeTicketAbierto(@Param("matricula") String matricula);
 
     // GET 11
-    @Query("select t from Ticket t where :abonado member of t.abonado and (:estado is null or t.estado = :estado) and (:precio1 is null or t.importe >= :precio1) and (:precio2 is null or t.importe <= :precio2) and (:minutos1 is null or t.minutosTotales >= :minutos1) and (:minutos2 is null or t.minutosTotales >= :minutos2)")
+    @Query("select t from Ticket t where :abonado member of t.abonado and (:estado is null or t.estado = :estado) and (:precio1 is null or t.importe >= :precio1) and (:precio2 is null or t.importe <= :precio2) and (:minutos1 is null or t.minutosTotales >= :minutos1) and (:minutos2 is null or t.minutosTotales <= :minutos2)")
     Page<Ticket> ticketsPorAbonado(
             @Param("abonado") Abonado abonado,
             @Param("estado") EstadoTicket estadoTicket,
@@ -32,6 +32,16 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
             @Param("precio2") BigDecimal precio2,
             @Param("minutos1") Integer minutos1,
             @Param("minutos2") Integer minutos2,
+            Pageable pageable
+            );
+
+    @Query("SELECT t FROM Ticket t WHERE (:estado IS NULL OR t.estado = :estado) AND (:precioMin IS NULL OR t.importe >= :precioMin) AND (:precioMax IS NULL OR t.importe <= :precioMax) AND (:minutosMin IS NULL OR t.minutosTotales >= :minutosMin) AND (:minutosMax IS NULL OR t.minutosTotales <= :minutosMax)")
+    Page<Ticket> todosLosTickets(
+            @Param("estado") EstadoTicket estado,
+            @Param("precioMin") BigDecimal precioMin,
+            @Param("precioMax") BigDecimal precioMax,
+            @Param("minutosMin") Integer minutosMin,
+            @Param("minutosMax") Integer minutosMax,
             Pageable pageable
             );
 
@@ -48,8 +58,11 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
     boolean existsByMatriculaAndEstado(String matricula, EstadoTicket estado);
 
     @Query(value = "SELECT t.* FROM parkcontrol.ticket t JOIN parkcontrol.ticket_abonado ta ON t.id = ta.id_ticket JOIN parkcontrol.abonado a ON ta.id_abonado = a.id JOIN parkcontrol.usuario u ON u.id_abonado = a.id WHERE u.id = :id", nativeQuery = true)
-    List<Ticket> ticketsPorIdUsuario(@Param("id") Integer id);
+    Page<Ticket> ticketsPorIdUsuario(@Param("id") Integer id, Pageable pageable);
 
     @Query("SELECT t FROM Ticket t WHERE t.matricula = :matricula AND t.estado = EstadoTicket.ABIERTO")
     Optional<Ticket> findByMatriculaAndEstado(@Param("matricula") String matricula, @Param("estado") EstadoTicket estado);
+
+    @Query("SELECT COALESCE(SUM(p.minDescuento), 0) FROM Promocion p WHERE p.ticket.id = :idTicket")
+    Integer minutosDescuentoAcumulados(@Param("idTicket") Integer idTicket);
 }

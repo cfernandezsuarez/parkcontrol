@@ -2,7 +2,7 @@ package es.safareyes.parkcontrol.dtos.response;
 
 import java.math.BigDecimal;
 
-public record DescuentoAplicadoResponse(
+public record PromocionAplicadaResponse(
 
     Integer ticketId,
 
@@ -10,10 +10,6 @@ public record DescuentoAplicadoResponse(
 
     Integer minutosDescontados,
 
-    Integer minutosTotalesDescuento,
-
-    BigDecimal importeActual,
-
-    String mensaje
+    Integer minutosTotalesDescuento
 
 ) {}

@@ -1,5 +1,5 @@
 package es.safareyes.parkcontrol.modelos;
 
 public enum EstadoTicket {
-    CERRADO, ABIERTO
+    ABIERTO, CERRADO
 }

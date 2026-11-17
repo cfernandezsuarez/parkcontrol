@@ -1,16 +1,20 @@
 package es.safareyes.parkcontrol.servicios;
 
+import es.safareyes.parkcontrol.conversores.TicketMapper;
 import es.safareyes.parkcontrol.dtos.request.AplicarDescuentoRequest;
+import es.safareyes.parkcontrol.dtos.request.PagarTicketRequest;
 import es.safareyes.parkcontrol.dtos.response.ImporteTicketResponse;
+import es.safareyes.parkcontrol.dtos.response.PromocionAplicadaResponse;
 import es.safareyes.parkcontrol.dtos.response.TicketAbonadoResponse;
+import es.safareyes.parkcontrol.dtos.response.TicketPagadoResponse;
 import es.safareyes.parkcontrol.exceptions.*;
 import es.safareyes.parkcontrol.modelos.*;
-import es.safareyes.parkcontrol.repositorios.IPlazaRepository;
-import es.safareyes.parkcontrol.repositorios.ITicketRepository;
+import es.safareyes.parkcontrol.repositorios.*;
 import es.safareyes.parkcontrol.dtos.request.TicketEntradaRequest;
-import es.safareyes.parkcontrol.repositorios.IUsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +32,10 @@ public class TicketService {
     private TarifaService tarifaService;
     private IPlazaRepository plazaRepository;
     private IUsuarioRepository usuarioRepository;
+    private IPromocionRepository promocionRepository;
+    private IAbonadoRepository abonadoRepository;
+
+    private TicketMapper ticketMapper;
 
     @Transactional
     public String registrarEntrada(TicketEntradaRequest request) {
@@ -135,27 +144,139 @@ public class TicketService {
     }
 
     @Transactional
-    public String aplicarPromocion(Integer id, AplicarDescuentoRequest request) {
-        return "";
+    public PromocionAplicadaResponse aplicarPromocion(Integer id, AplicarDescuentoRequest request) {
+        Ticket ticket = repository.findById(id).orElseThrow(() -> new ElementoNoEncontrado("Ticket no encontrado."));
+
+        // RN-06
+        if (ticket.getEstado() != EstadoTicket.ABIERTO) {
+            throw new ReglaNegocio("Solo se pueden aplicar promociones a tickets activos.");
+        }
+
+        Promocion promocion = promocionRepository.findById(request.idPromocion()).orElseThrow(() -> new ElementoNoEncontrado("No se encuentra la promoción."));
+
+        // RN-06
+        if (promocionRepository.existePromocionEnTicket(id, promocion.getId())) {
+            throw new PromocionRepetida("La promoción ya está aplicada a este ticket.");
+        }
+
+        Integer minutosActuales = repository.minutosDescuentoAcumulados(id);
+
+        Integer nuevosMinutos = minutosActuales + promocion.getMinDescuento();
+
+        // RN-06
+        if (nuevosMinutos > 180) {
+            throw new ReglaNegocio("No se puede superar los 180 minutos de descuento por ticket.");
+        }
+
+        promocion.setTicket(ticket);
+        promocionRepository.save(promocion);
+
+        return new PromocionAplicadaResponse(ticket.getId(), promocion.getNombre(), promocion.getMinDescuento(), nuevosMinutos);
     }
 
     @Transactional(readOnly = true)
-    public List<TicketAbonadoResponse> obtenerMisTickets(String nombreUsuario) {
+    public Page<TicketAbonadoResponse> obtenerMisTickets(String nombreUsuario, Boolean esAbonado, EstadoTicket estado, BigDecimal precioMin, BigDecimal precioMax, Integer minutosMin, Integer minutosMax, int page, int size) {
 
-        Usuario usuario = usuarioRepository.findByNombre(nombreUsuario)
-                .orElseThrow(() -> new ElementoNoEncontrado("Usuario no encontrado"));
+        Pageable pageable = PageRequest.of(page, size);
 
-        return repository.ticketsPorIdUsuario(usuario.getId()).stream()
-            .map(t -> new TicketAbonadoResponse(
-                t.getId(),
-                t.getMatricula(),
-                t.getHoraEntrada(),
-                t.getHoraSalida(),
-                t.getMinutosTotales(),
-                t.getImporte(),
-                t.getEstado(),
-                t.getPlaza() != null ? t.getPlaza().getNumero() : null
-            ))
-            .toList();
+        if (esAbonado) {
+            Integer idAbonado = usuarioRepository.findIdAbonadoByNombre(nombreUsuario);
+            if (idAbonado == null) {
+                return Page.empty(pageable);
+            }
+
+            Abonado abonado = abonadoRepository.findById(idAbonado).orElseThrow(() -> new ElementoNoEncontrado("No se encuentra el abonado"));
+
+            return repository.ticketsPorAbonado(
+                    abonado, estado, precioMin, precioMax, minutosMin, minutosMax, pageable
+            ).map(t -> ticketMapper.toDto(t));
+
+        } else {
+            return repository.todosLosTickets(
+                    estado, precioMin, precioMax, minutosMin, minutosMax, pageable
+            ).map(t -> ticketMapper.toDto(t));
+        }
+    }
+
+    @Transactional
+    public TicketPagadoResponse pagarTicket(PagarTicketRequest request) {
+
+        String matricula = request.matricula().toUpperCase();
+
+        Ticket ticket = repository.findByMatriculaAndEstado(matricula, EstadoTicket.ABIERTO)
+                .orElseThrow(() -> new ElementoNoEncontrado("No hay ticket activo para la matrícula."));
+
+        LocalDateTime horaActual = LocalDateTime.now();
+        Tarifa tarifa = ticket.getTarifa();
+
+        Long minutos = Duration.between(ticket.getHoraEntrada(), horaActual).toMinutes();
+
+        // RN-05
+        if (Duration.between(ticket.getHoraEntrada(), horaActual).toSecondsPart() > 0) {
+            minutos++;
+        }
+
+        Integer minutosDescuento = repository.minutosDescuentoAcumulados(ticket.getId());
+
+        // RN-08
+        Boolean esAbonado = abonadoRepository.existsByMatriculaAndVigente(matricula, horaActual);
+
+        BigDecimal importeFinal;
+
+        if (esAbonado) {
+            importeFinal = BigDecimal.ZERO;
+        } else {
+            importeFinal = calcularImporteFinal(minutos, tarifa, minutosDescuento);
+        }
+
+        ticket.setHoraSalida(horaActual);
+        ticket.setMinutosTotales(Math.toIntExact(minutos));
+        ticket.setImporte(importeFinal);
+        ticket.setEstado(EstadoTicket.CERRADO);
+
+        // RN-07
+        Plaza plaza = ticket.getPlaza();
+        if (plaza != null) {
+            plaza.setEstado(EstadoPlaza.LIBRE);
+            plazaRepository.save(plaza);
+        }
+
+        repository.save(ticket);
+
+        return new TicketPagadoResponse(
+                ticket.getId(),
+                ticket.getMatricula(),
+                ticket.getHoraEntrada(),
+                ticket.getHoraSalida(),
+                ticket.getMinutosTotales(),
+                Math.toIntExact(minutosDescuento),
+                importeFinal,
+                plaza != null ? plaza.getNumero() : null
+        );
+    }
+
+    private BigDecimal calcularImporteFinal(Long minutos, Tarifa tarifa, Integer minutosDescuento) {
+
+        if (minutos <= tarifa.getMinCortesia()) {
+            return BigDecimal.ZERO;
+        }
+
+        Long minutosCobrados = minutos - tarifa.getMinCortesia();
+
+        minutosCobrados = Math.max(0, minutosCobrados - minutosDescuento);
+
+        BigDecimal importe = BigDecimal.valueOf(minutosCobrados).multiply(tarifa.getPrecio());
+
+        if (tarifa.getTopeMaximo() != null) {
+            long dia = (minutos / 1440) +1;
+            BigDecimal topeTotal = BigDecimal.valueOf(tarifa.getTopeMaximo()).multiply(BigDecimal.valueOf(dia));
+
+            if (importe.compareTo(topeTotal) > 0) {
+                importe = topeTotal;
+            }
+        }
+
+        double importeRedondeado = Math.round(importe.doubleValue() * 100.0) / 100.0;
+        return BigDecimal.valueOf(importeRedondeado);
     }
 }

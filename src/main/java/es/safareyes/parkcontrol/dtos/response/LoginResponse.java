@@ -1,10 +1,7 @@
 package es.safareyes.parkcontrol.dtos.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public record LoginResponse(
 
-@Data
-@AllArgsConstructor
-public class LoginResponse {
-    private String token;
-}
+        String token
+
+){}

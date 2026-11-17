@@ -20,10 +20,10 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getNombre(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.nombre(), request.password())
         );
 
-        UserDetails user = usuarioDetailsService.loadUserByUsername(request.getNombre());
+        UserDetails user = usuarioDetailsService.loadUserByUsername(request.nombre());
 
         String token = jwtService.generarToken(user);
 
