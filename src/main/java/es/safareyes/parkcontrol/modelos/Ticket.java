@@ -54,6 +54,9 @@ public class Ticket {
     @JoinColumn(name = "id_plaza")
     private Plaza plaza;
 
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
+    private List<Promocion> promociones;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             schema = "parkcontrol",

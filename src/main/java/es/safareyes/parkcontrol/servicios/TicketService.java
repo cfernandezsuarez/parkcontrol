@@ -3,10 +3,7 @@ package es.safareyes.parkcontrol.servicios;
 import es.safareyes.parkcontrol.conversores.TicketMapper;
 import es.safareyes.parkcontrol.dtos.request.AplicarDescuentoRequest;
 import es.safareyes.parkcontrol.dtos.request.PagarTicketRequest;
-import es.safareyes.parkcontrol.dtos.response.ImporteTicketResponse;
-import es.safareyes.parkcontrol.dtos.response.PromocionAplicadaResponse;
-import es.safareyes.parkcontrol.dtos.response.TicketAbonadoResponse;
-import es.safareyes.parkcontrol.dtos.response.TicketPagadoResponse;
+import es.safareyes.parkcontrol.dtos.response.*;
 import es.safareyes.parkcontrol.exceptions.*;
 import es.safareyes.parkcontrol.modelos.*;
 import es.safareyes.parkcontrol.repositorios.*;
@@ -15,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -189,12 +186,12 @@ public class TicketService {
 
             return repository.ticketsPorAbonado(
                     abonado, estado, precioMin, precioMax, minutosMin, minutosMax, pageable
-            ).map(t -> ticketMapper.toDto(t));
+            ).map(t -> ticketMapper.toAbonadoDto(t));
 
         } else {
             return repository.todosLosTickets(
                     estado, precioMin, precioMax, minutosMin, minutosMax, pageable
-            ).map(t -> ticketMapper.toDto(t));
+            ).map(t -> ticketMapper.toAbonadoDto(t));
         }
     }
 
@@ -278,5 +275,32 @@ public class TicketService {
 
         double importeRedondeado = Math.round(importe.doubleValue() * 100.0) / 100.0;
         return BigDecimal.valueOf(importeRedondeado);
+    }
+
+    @Transactional
+    public TicketDetalleResponse obtenerDetalleTicket(Integer idTicket, Authentication authentication) {
+
+        Ticket ticket = repository.findById(idTicket).orElseThrow(() -> new ElementoNoEncontrado("No se encuentra el ticket"));
+
+        Boolean esAbonado = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ABONADO"));
+
+        if (esAbonado) {
+            String nombreUsuario = authentication.getName();
+            Integer idAbonado = usuarioRepository.findIdAbonadoByNombre(nombreUsuario);
+
+            Boolean esPropietario = ticket.getAbonado().stream()
+                    .anyMatch(a -> a.getId().equals(idAbonado));
+
+            if (!esPropietario) {
+                throw new ReglaNegocio("No tienes permiso para ver este ticket");
+            }
+        }
+
+        List<DescuentoDetalleDTO> descuentos = promocionRepository
+                .findPromocionesByTicket(idTicket).stream()
+                .map(p -> new DescuentoDetalleDTO(p.getNombre(), p.getMinDescuento())).toList();
+
+        return ticketMapper.toDetalleDto(ticket);
     }
 }

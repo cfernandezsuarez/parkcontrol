@@ -3,10 +3,7 @@ package es.safareyes.parkcontrol.controladores;
 import es.safareyes.parkcontrol.dtos.request.AplicarDescuentoRequest;
 import es.safareyes.parkcontrol.dtos.request.PagarTicketRequest;
 import es.safareyes.parkcontrol.dtos.request.TicketEntradaRequest;
-import es.safareyes.parkcontrol.dtos.response.ImporteTicketResponse;
-import es.safareyes.parkcontrol.dtos.response.PromocionAplicadaResponse;
-import es.safareyes.parkcontrol.dtos.response.TicketAbonadoResponse;
-import es.safareyes.parkcontrol.dtos.response.TicketPagadoResponse;
+import es.safareyes.parkcontrol.dtos.response.*;
 import es.safareyes.parkcontrol.modelos.EstadoTicket;
 import es.safareyes.parkcontrol.servicios.TicketService;
 import jakarta.validation.Valid;
@@ -71,6 +68,14 @@ public class TicketController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ABONADO"));
 
         return ResponseEntity.ok(service.obtenerMisTickets(authentication.getName(), esAbonado, estado, precioMin, precioMax, minutosMin, minutosMax, page, size));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<TicketDetalleResponse> obtenerDetalleTicket(
+            @PathVariable(name = "id") Integer id,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(service.obtenerDetalleTicket(id, authentication));
     }
 
 }

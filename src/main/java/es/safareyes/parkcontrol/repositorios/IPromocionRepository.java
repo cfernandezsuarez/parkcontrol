@@ -17,4 +17,7 @@ public interface IPromocionRepository extends JpaRepository<Promocion, Integer> 
 
     @Query("SELECT COUNT(p) > 0 FROM Promocion p WHERE p.ticket.id = :idTicket AND p.id = :idPromocion")
     boolean existePromocionEnTicket(@Param("idTicket") Integer idTicket, @Param("idPromocion") Integer idPromocion);
+
+    @Query("SELECT p FROM Promocion p WHERE p.ticket.id = :idTicket")
+    List<Promocion> findPromocionesByTicket(@Param("idTicket") Integer idTicket);
 }
