@@ -2,7 +2,7 @@ package es.safareyes.parkcontrol.repositorios;
 
 import es.safareyes.parkcontrol.dtos.DetalleTicketDescuento;
 import es.safareyes.parkcontrol.dtos.ImporteTicket;
-import es.safareyes.parkcontrol.dtos.RecaudacionDia;
+import es.safareyes.parkcontrol.dtos.response.RecaudacionDiaResponse;
 import es.safareyes.parkcontrol.modelos.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +51,7 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
 
     // GET 15
     @Query(value = "select row_number() over (order by date_trunc('day', t.horaSalida)) as dia, sum(t.importe) as importe_total from Ticket t where t.horaSalida >= :horaInicio and t.horaSalida <= :horaFin group by date_trunc('day', t.horaSalida) ")
-    List<RecaudacionDia> recaudacionPorDia(
+    List<RecaudacionDiaResponse> recaudacionPorDia(
             @Param("horaInicio") LocalDateTime horaInicio,
             @Param("horaFin") LocalDateTime horaFin);
 

@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol;
 
 import es.safareyes.parkcontrol.dtos.*;
+import es.safareyes.parkcontrol.dtos.response.RecaudacionDiaResponse;
 import es.safareyes.parkcontrol.modelos.*;
 import es.safareyes.parkcontrol.repositorios.*;
 import org.junit.jupiter.api.Test;
@@ -97,7 +98,7 @@ public class TestRepositorios {
     @Test
     public void recaudacionDia() {
 
-        List<RecaudacionDia> recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 23, 59));
+        RecaudacionDiaResponse recaudacion = ticketRepository.recaudacionPorDia(LocalDateTime.of(2024, 1, 1, 0, 0), LocalDateTime.of(2024, 1, 1, 23, 59));
 
     }
 
