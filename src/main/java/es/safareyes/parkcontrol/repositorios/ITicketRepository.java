@@ -70,4 +70,6 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
 
     @Query("SELECT COALESCE(SUM(p.minDescuento), 0) FROM Promocion p WHERE p.ticket.id = :idTicket")
     Integer minutosDescuentoAcumulados(@Param("idTicket") Integer idTicket);
+
+    boolean existsByTarifaId(Integer tarifaId);
 }

@@ -8,6 +8,8 @@ import es.safareyes.parkcontrol.repositorios.IAbonadoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class AbonadoService {
@@ -36,6 +38,10 @@ public class AbonadoService {
         repository.save(abonado);
 
         return "Abonado creado correctamente";
+    }
+
+    public List<Abonado> obtenerAbonados() {
+        return this.repository.findAll();
     }
 
 }

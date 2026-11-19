@@ -31,34 +31,87 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.PATCH,
-                    "/plazas/*/estado"
-                    ).hasAnyRole("ADMIN", "OPERADOR")
-                .requestMatchers(HttpMethod.POST,
-                    "/plazas", "/tarifas"
-                    ).hasAnyRole("ADMIN")
-                .requestMatchers(HttpMethod.POST,
-                    "/tickets/entrada"
-                    ).hasAnyRole("ADMIN", "OPERADOR")
-                .requestMatchers(HttpMethod.GET,
-                    "/plazas/total",
-                    "/plazas/ocupacion",
-                    "/plazas/disponibilidad",
-                    "/plazas/total/planta",
-                    "/plazas/planta/{planta}"
-                    ).permitAll()
-                .requestMatchers(HttpMethod.GET,
-                    "/tarifas/vigente",
-                    "/tickets/mis-tickets"
-                    ).hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+
+                        // ==========================================
+                        // 1. RUTAS PÚBLICAS (sin token)
+                        // ==========================================
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        // Plazas (consulta pública)
+                        .requestMatchers(HttpMethod.GET,
+                                "/plazas/total",
+                                "/plazas/ocupacion",
+                                "/plazas/disponibilidad",
+                                "/plazas/total/planta",
+                                "/plazas/planta/{planta}"
+                        ).permitAll()
+
+                        // Tarifa vigente (consulta pública)
+                        .requestMatchers(HttpMethod.GET, "/tarifas/vigente").permitAll()
+
+                        // ==========================================
+                        // 2. RUTAS DE ADMIN
+                        // ==========================================
+                        .requestMatchers(HttpMethod.POST,
+                                "/plazas",
+                                "/tarifas"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/tarifas/*"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers("/abonados/**").hasRole("ADMIN")
+                        .requestMatchers("/informes/**").hasRole("ADMIN")
+
+                        // ==========================================
+                        // 3. RUTAS DE ADMIN Y OPERADOR
+                        // ==========================================
+                        .requestMatchers(HttpMethod.PATCH,
+                                "/plazas/*/estado"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/tickets/entrada"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/tickets/*/importe"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/tickets/*/descuentos"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/tickets/pagar"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/promociones"
+                        ).hasAnyRole("ADMIN", "OPERADOR")
+
+                        // ==========================================
+                        // 4. RUTAS DE ADMIN, OPERADOR Y ABONADO
+                        // ==========================================
+                        // Listado de tickets (paginado, filtrado)
+                        .requestMatchers(HttpMethod.GET, "/tickets")
+                        .hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
+
+                        // Detalle de un ticket
+                        .requestMatchers(HttpMethod.GET, "/tickets/*")
+                        .hasAnyRole("ADMIN", "OPERADOR", "ABONADO")
+
+                        // ==========================================
+                        // 5. RESTO: CUALQUIER USUARIO AUTENTICADO
+                        // ==========================================
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

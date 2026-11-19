@@ -37,4 +37,16 @@ public class TarifaController {
     public ResponseEntity<Tarifa> tarifasVigor() {
         return ResponseEntity.ok(service.tarifasVigor());
     }
+
+    @GetMapping("/total")
+    public ResponseEntity<List<Tarifa>> obtenerTarifas() {
+        return ResponseEntity.ok(service.obtenerTarifas());
+    }
+
+    @DeleteMapping("/{id}/eliminar")
+    public ResponseEntity<String> eliminarTarifa(
+            @PathVariable(name = "id") Integer id
+    ) {
+        return ResponseEntity.ok(service.eliminarTarifa(id));
+    }
 }
