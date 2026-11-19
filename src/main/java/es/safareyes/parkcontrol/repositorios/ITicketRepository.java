@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol.repositorios;
 
 import es.safareyes.parkcontrol.dtos.DetalleTicketDescuento;
+import es.safareyes.parkcontrol.dtos.EstanciaMediaPlantaDTO;
 import es.safareyes.parkcontrol.dtos.ImporteTicket;
 import es.safareyes.parkcontrol.dtos.response.RecaudacionDiaResponse;
 import es.safareyes.parkcontrol.modelos.*;
@@ -56,8 +57,8 @@ public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
             @Param("horaFin") LocalDateTime horaFin);
 
     // GET 16
-    @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (t.hora_salida - t.hora_entrada)) / 60) FROM parkcontrol.ticket t WHERE t.hora_salida IS NOT NULL", nativeQuery = true)
-    Double estanciaMediaMinutos();
+    @Query(value = "SELECT p.planta AS planta, AVG(EXTRACT(EPOCH FROM (t.hora_salida - t.hora_entrada)) / 60) AS estanciaMedia FROM parkcontrol.ticket t JOIN parkcontrol.plaza p ON t.id_plaza = p.id WHERE t.hora_salida IS NOT NULL GROUP BY p.planta", nativeQuery = true)
+    List<EstanciaMediaPlantaDTO> estanciaMediaMinutos();
 
     boolean existsByMatriculaAndEstado(String matricula, EstadoTicket estado);
 

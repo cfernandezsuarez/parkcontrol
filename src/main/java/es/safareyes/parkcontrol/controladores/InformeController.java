@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.controladores;
 
+import es.safareyes.parkcontrol.dtos.response.OcupacionPlantaResponse;
 import es.safareyes.parkcontrol.dtos.response.RecaudacionDiaResponse;
 import es.safareyes.parkcontrol.servicios.InformeService;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,11 @@ public class InformeController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate hasta
             ) {
         return ResponseEntity.ok(service.obtenerRecaudacionDia(desde, hasta));
+    }
+
+    @GetMapping("/ocupacion")
+    public ResponseEntity<List<OcupacionPlantaResponse>> obtenerOcupacion() {
+        return ResponseEntity.ok(service.obtenerOcupacionPorPlanta());
     }
 
 }
