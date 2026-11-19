@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol.controladores;
 
 import es.safareyes.parkcontrol.dtos.request.CrearAbonadoRequest;
+import es.safareyes.parkcontrol.dtos.response.AbonadoResponse;
 import es.safareyes.parkcontrol.modelos.Abonado;
 import es.safareyes.parkcontrol.servicios.AbonadoService;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class AbonadoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Abonado>> obtenerAbonados() {
+    public ResponseEntity<List<AbonadoResponse>> obtenerAbonados() {
         return ResponseEntity.ok(service.obtenerAbonados());
     }
 

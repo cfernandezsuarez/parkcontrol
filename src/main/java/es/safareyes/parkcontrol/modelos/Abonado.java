@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.modelos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

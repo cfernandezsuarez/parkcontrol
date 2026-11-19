@@ -1,12 +1,15 @@
 package es.safareyes.parkcontrol.servicios;
 
+import es.safareyes.parkcontrol.conversores.AbonadoMapper;
 import es.safareyes.parkcontrol.dtos.request.CrearAbonadoRequest;
+import es.safareyes.parkcontrol.dtos.response.AbonadoResponse;
 import es.safareyes.parkcontrol.exceptions.MatriculaInvalida;
 import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.Abonado;
 import es.safareyes.parkcontrol.repositorios.IAbonadoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +18,7 @@ import java.util.List;
 public class AbonadoService {
 
     private IAbonadoRepository repository;
+    private AbonadoMapper mapper;
 
     public String altaDeAbonado(CrearAbonadoRequest request) {
 
@@ -40,8 +44,11 @@ public class AbonadoService {
         return "Abonado creado correctamente";
     }
 
-    public List<Abonado> obtenerAbonados() {
-        return this.repository.findAll();
+    @Transactional(readOnly = true)
+    public List<AbonadoResponse> obtenerAbonados() {
+        return repository.findAll().stream()
+                .map(mapper::toAbonadoDto)
+                .toList();
     }
 
 }
