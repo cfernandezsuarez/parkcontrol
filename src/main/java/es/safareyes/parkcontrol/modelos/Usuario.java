@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.modelos;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,19 +35,36 @@ public class Usuario implements UserDetails {
     private Rol rol;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.rol.name()));
     }
 
-    public String getPassword() {
-        return contrasenya;
+    @Override
+    public @Nullable String getPassword() {
+        return this.contrasenya;
     }
 
+    @Override
     public String getUsername() {
-        return nombre;
+        return this.nombre;
     }
 
-    public boolean isAccountNonExpired()     { return true; }
-    public boolean isAccountNonLocked()      { return true; }
-    public boolean isCredentialsNonExpired() { return true; }
-    public boolean isEnabled()               { return true; }
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }
