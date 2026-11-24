@@ -1,6 +1,7 @@
 package es.safareyes.parkcontrol.controladores;
 
 import es.safareyes.parkcontrol.dtos.CrearNuevaTarifaDTO;
+import es.safareyes.parkcontrol.dtos.request.ActualizarTarifaDTO;
 import es.safareyes.parkcontrol.modelos.Tarifa;
 import es.safareyes.parkcontrol.servicios.TarifaService;
 import lombok.AllArgsConstructor;
@@ -48,5 +49,12 @@ public class TarifaController {
             @PathVariable(name = "id") Integer id
     ) {
         return ResponseEntity.ok(service.eliminarTarifa(id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Tarifa> actualizarTarifa(
+            @PathVariable Integer id,
+            @RequestBody ActualizarTarifaDTO dto) {
+        return ResponseEntity.ok(service.actualizarTarifa(id, dto));
     }
 }
