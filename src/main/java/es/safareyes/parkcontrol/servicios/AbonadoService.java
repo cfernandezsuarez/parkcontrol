@@ -1,8 +1,10 @@
 package es.safareyes.parkcontrol.servicios;
 
 import es.safareyes.parkcontrol.conversores.AbonadoMapper;
+import es.safareyes.parkcontrol.dtos.request.ActualizarAbonadoDTO;
 import es.safareyes.parkcontrol.dtos.request.CrearAbonadoRequest;
 import es.safareyes.parkcontrol.dtos.response.AbonadoResponse;
+import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
 import es.safareyes.parkcontrol.exceptions.MatriculaInvalida;
 import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.Abonado;
@@ -49,6 +51,27 @@ public class AbonadoService {
         return repository.findAll().stream()
                 .map(mapper::toAbonadoDto)
                 .toList();
+    }
+
+    public AbonadoResponse actualizarAbonado(Integer id, ActualizarAbonadoDTO dto) {
+        Abonado abonado = repository.findById(id)
+                .orElseThrow(() -> new ElementoNoEncontrado("Abonado no encontrado"));
+
+        if (dto.email() != null) abonado.setEmail(dto.email());
+        if (dto.nombre() != null) abonado.setNombre(dto.nombre());
+        if (dto.matricula() != null) abonado.setMatricula(dto.matricula().toUpperCase());
+        if (dto.fechaInicio() != null) abonado.setFechaInicio(dto.fechaInicio());
+        if (dto.fechaFin() != null) abonado.setFechaFin(dto.fechaFin());
+
+        return mapper.toAbonadoDto(repository.save(abonado));
+    }
+
+    public String eliminarAbonado(Integer id) {
+        Abonado abonado = repository.findById(id)
+                .orElseThrow(() -> new ElementoNoEncontrado("Abonado no encontrado"));
+
+        repository.delete(abonado);
+        return "Abonado eliminado correctamente";
     }
 
 }

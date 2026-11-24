@@ -1,5 +1,6 @@
 package es.safareyes.parkcontrol.controladores;
 
+import es.safareyes.parkcontrol.dtos.request.ActualizarAbonadoDTO;
 import es.safareyes.parkcontrol.dtos.request.CrearAbonadoRequest;
 import es.safareyes.parkcontrol.dtos.response.AbonadoResponse;
 import es.safareyes.parkcontrol.modelos.Abonado;
@@ -27,6 +28,18 @@ public class AbonadoController {
     @GetMapping
     public ResponseEntity<List<AbonadoResponse>> obtenerAbonados() {
         return ResponseEntity.ok(service.obtenerAbonados());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AbonadoResponse> actualizarAbonado(
+            @PathVariable Integer id,
+            @RequestBody ActualizarAbonadoDTO dto) {
+        return ResponseEntity.ok(service.actualizarAbonado(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarAbonado(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.eliminarAbonado(id));
     }
 
 }

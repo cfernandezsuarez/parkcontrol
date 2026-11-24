@@ -69,10 +69,12 @@ public class SecurityConfig {
                                 "/tarifas"
                         ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,
-                                "/tarifas/*"
+                                "/tarifas/*",
+                                "/abonados/*"
                         ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH,
-                                "/tarifas/*"
+                                "/tarifas/*",
+                                "/abonados/*"
                         ).hasRole("ADMIN")
 
                         .requestMatchers("/abonados/**").hasRole("ADMIN")
