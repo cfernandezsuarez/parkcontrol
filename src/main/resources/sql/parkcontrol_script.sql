@@ -67,12 +67,12 @@ create table if not exists ticket_abonado (
 );
 
 -- 1. TARIFAS
-INSERT INTO tarifa (nombre, tope_maximo, min_cortesia, precio) VALUES
-    ('Básica', 60,   15, 1.50),
-    ('Estándar', 120,  20, 2.00),
-    ('Extendida', 240,  30, 3.50),
-    ('Jornada', 480,  45, 5.00),
-    ('Día', 1440, 60, 8.00);
+INSERT INTO tarifa (nombre, tope_maximo, fecha, min_cortesia, precio) VALUES
+    ('Básica', 60, 2026-11-17 19:01:41.263523, 15, 0.05),
+    ('Estándar', 120, 2026-11-03 19:01:41.263000, 20, 0.06),
+    ('Extendida', 240, 2026-11-02 19:01:41.263000, 30, 0.02),
+    ('Jornada', 480, 2026-11-01 19:01:41.263000, 45, 0.03),
+    ('Día', 1440, 2026-11-05 17:01:41.263000, 60, 0.1);
 
 -- 2. PLAZAS (200 en total: 28 ocupadas, 10 bloqueadas, 162 libres)
 INSERT INTO plaza (numero, planta, tipo, estado) VALUES

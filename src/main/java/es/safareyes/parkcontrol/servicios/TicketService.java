@@ -78,59 +78,26 @@ public class TicketService {
         return "Ticket creado correctamente para la matrícula " + matricula;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ImporteTicketResponse importeTicket(String matricula) {
 
         Ticket ticket = repository.findByMatriculaAndEstado(matricula.toUpperCase(), EstadoTicket.ABIERTO)
                 .orElseThrow(() -> new ElementoNoEncontrado("No hay ticket activo para la matrícula " + matricula));
 
         Tarifa tarifa = ticket.getTarifa();
-
-        BigDecimal importe = calcularImporte(ticket, tarifa);
-
-        long minutos = Duration.between(ticket.getHoraEntrada(), LocalDateTime.now()).toMinutes();
+        LocalDateTime horaActual = LocalDateTime.now();
+        CalculoCobro cobro = calcularCobro(ticket, horaActual);
 
         return new ImporteTicketResponse(
                 ticket.getId(),
                 ticket.getMatricula(),
-                minutos,
+                Duration.between(ticket.getHoraEntrada(), horaActual).toMinutes(),
                 tarifa.getMinCortesia().longValue(),
-                Math.max(0, minutos - tarifa.getMinCortesia()),
-                importe,
-                "Importe calculado sin cerrar el ticket"
+                cobro.minutosCobrados(),
+                cobro.importe(),
+                cobro.esAbonado() ? "Abono vigente: la estancia está cubierta." : "Importe calculado sin cerrar el ticket"
         );
 
-    }
-
-    // RN-05
-    private BigDecimal calcularImporte(Ticket ticket, Tarifa tarifa) {
-        LocalDateTime ahora = LocalDateTime.now();
-        LocalDateTime entrada = ticket.getHoraEntrada();
-
-        long minutos = Duration.between(entrada, ahora).toMinutes();
-        if (Duration.between(entrada, ahora).getSeconds() % 60 > 0) {
-            minutos++;
-        }
-
-        long cortesia = tarifa.getMinCortesia();
-
-        if (minutos <= cortesia) {
-            return BigDecimal.ZERO;
-        }
-
-        long minutosCobrados = minutos - cortesia;
-        double importeBruto = minutosCobrados * tarifa.getPrecio().doubleValue();
-
-        if (tarifa.getTopeMaximo() != null) {
-            long bloquesDe24h = (minutos / 1440) + 1;
-            double topeTotal = tarifa.getTopeMaximo() * bloquesDe24h;
-            if (importeBruto > topeTotal) {
-                importeBruto = topeTotal;
-            }
-        }
-
-        double importeRedondeado = Math.round(importeBruto * 100.0) / 100.0;
-        return BigDecimal.valueOf(importeRedondeado);
     }
 
     private void validarMatricula(String matricula) {
@@ -204,31 +171,11 @@ public class TicketService {
                 .orElseThrow(() -> new ElementoNoEncontrado("No hay ticket activo para la matrícula."));
 
         LocalDateTime horaActual = LocalDateTime.now();
-        Tarifa tarifa = ticket.getTarifa();
-
-        Long minutos = Duration.between(ticket.getHoraEntrada(), horaActual).toMinutes();
-
-        // RN-05
-        if (Duration.between(ticket.getHoraEntrada(), horaActual).toSecondsPart() > 0) {
-            minutos++;
-        }
-
-        Integer minutosDescuento = repository.minutosDescuentoAcumulados(ticket.getId());
-
-        // RN-08
-        Boolean esAbonado = abonadoRepository.existsByMatriculaAndVigente(matricula, horaActual);
-
-        BigDecimal importeFinal;
-
-        if (esAbonado) {
-            importeFinal = BigDecimal.ZERO;
-        } else {
-            importeFinal = calcularImporteFinal(minutos, tarifa, minutosDescuento);
-        }
+        CalculoCobro cobro = calcularCobro(ticket, horaActual);
 
         ticket.setHoraSalida(horaActual);
-        ticket.setMinutosTotales(Math.toIntExact(minutos));
-        ticket.setImporte(importeFinal);
+        ticket.setMinutosTotales(Math.toIntExact(cobro.minutosTotales()));
+        ticket.setImporte(cobro.importe());
         ticket.setEstado(EstadoTicket.CERRADO);
 
         // RN-07
@@ -246,21 +193,33 @@ public class TicketService {
                 ticket.getHoraEntrada(),
                 ticket.getHoraSalida(),
                 ticket.getMinutosTotales(),
-                Math.toIntExact(minutosDescuento),
-                importeFinal,
+                cobro.minutosDescuento(),
+                cobro.importe(),
                 plaza != null ? plaza.getNumero() : null
         );
     }
 
-    private BigDecimal calcularImporteFinal(Long minutos, Tarifa tarifa, Integer minutosDescuento) {
-
-        if (minutos <= tarifa.getMinCortesia()) {
-            return BigDecimal.ZERO;
+    private CalculoCobro calcularCobro(Ticket ticket, LocalDateTime horaActual) {
+        Duration estancia = Duration.between(ticket.getHoraEntrada(), horaActual);
+        long minutosTotales = estancia.toMinutes();
+        if (estancia.toSecondsPart() > 0) {
+            minutosTotales++;
         }
 
-        Long minutosCobrados = minutos - tarifa.getMinCortesia();
+        Tarifa tarifa = ticket.getTarifa();
+        int minutosDescuento = repository.minutosDescuentoAcumulados(ticket.getId());
+        boolean esAbonado = abonadoRepository.existsByMatriculaAndVigente(ticket.getMatricula(), horaActual);
+        long minutosCobrados = esAbonado ? 0
+                : Math.max(0, minutosTotales - tarifa.getMinCortesia() - minutosDescuento);
+        BigDecimal importe = minutosCobrados == 0 ? BigDecimal.ZERO
+                : calcularImporteFinal(minutosTotales, minutosCobrados, tarifa);
+        return new CalculoCobro(minutosTotales, minutosDescuento, esAbonado, minutosCobrados, importe);
+    }
 
-        minutosCobrados = Math.max(0, minutosCobrados - minutosDescuento);
+    private record CalculoCobro(long minutosTotales, int minutosDescuento, boolean esAbonado,
+                                long minutosCobrados, BigDecimal importe) {}
+
+    private BigDecimal calcularImporteFinal(long minutos, long minutosCobrados, Tarifa tarifa) {
 
         BigDecimal importe = BigDecimal.valueOf(minutosCobrados).multiply(tarifa.getPrecio());
 
