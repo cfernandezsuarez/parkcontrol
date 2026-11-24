@@ -10,6 +10,9 @@ import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.Abonado;
 import es.safareyes.parkcontrol.repositorios.IAbonadoRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,10 +50,10 @@ public class AbonadoService {
     }
 
     @Transactional(readOnly = true)
-    public List<AbonadoResponse> obtenerAbonados() {
-        return repository.findAll().stream()
-                .map(mapper::toAbonadoDto)
-                .toList();
+    public Page<AbonadoResponse> obtenerAbonados(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable)
+                .map(mapper::toAbonadoDto);
     }
 
     public AbonadoResponse actualizarAbonado(Integer id, ActualizarAbonadoDTO dto) {
