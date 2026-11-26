@@ -1,9 +1,6 @@
 package es.safareyes.parkcontrol.controladores;
 
-import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
-import es.safareyes.parkcontrol.exceptions.MatriculaInvalida;
-import es.safareyes.parkcontrol.exceptions.PromocionRepetida;
-import es.safareyes.parkcontrol.exceptions.SinPlazasLibres;
+import es.safareyes.parkcontrol.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -22,6 +19,11 @@ public class ErrorController {
     @ExceptionHandler(ElementoNoEncontrado.class)
     public ProblemDetail noEncontrado(ElementoNoEncontrado e) {
         return construir(HttpStatus.NOT_FOUND, "Recurso no encontrado", e.getMessage());
+    }
+
+    @ExceptionHandler(ReglaNegocio.class)
+    public ProblemDetail reglaNegocio(ReglaNegocio e) {
+        return construir(HttpStatus.NOT_FOUND, "Regla de negocio no cumplida", e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

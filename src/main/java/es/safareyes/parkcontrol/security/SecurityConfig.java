@@ -1,6 +1,5 @@
 package es.safareyes.parkcontrol.security;
 
-import es.safareyes.parkcontrol.config.CorsConfig;
 import es.safareyes.parkcontrol.servicios.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -47,7 +45,7 @@ public class SecurityConfig {
                         // ==========================================
                         // 1. RUTAS PÚBLICAS (sin token)
                         // ==========================================
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/**").permitAll()
 
                         // Plazas (consulta pública)
                         .requestMatchers(HttpMethod.GET,

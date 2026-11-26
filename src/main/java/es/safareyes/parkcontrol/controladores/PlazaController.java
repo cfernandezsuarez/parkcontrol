@@ -2,6 +2,7 @@ package es.safareyes.parkcontrol.controladores;
 
 import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
 import es.safareyes.parkcontrol.dtos.PlazasOcupacionDTO;
+import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.Plaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
@@ -46,6 +47,11 @@ public class PlazaController {
     public String bloquearPlaza(@PathVariable(name = "id") Integer id) {
         service.bloquearPlaza(id);
         Plaza plaza = service.consultarPlazaPorId(id);
+
+        if (plaza.getEstado() == EstadoPlaza.OCUPADA) {
+            throw new ReglaNegocio("No se puede bloquear una plaza ocupada");
+        }
+
         return plaza.getEstado() == EstadoPlaza.BLOQUEADA ? "La plaza ha sido bloqueada correctamente" : "La plaza ha sido desbloqueada correctamente";
     }
 
