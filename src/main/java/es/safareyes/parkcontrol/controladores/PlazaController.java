@@ -1,6 +1,6 @@
 package es.safareyes.parkcontrol.controladores;
 
-import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
+import es.safareyes.parkcontrol.dtos.request.CrearNuevaPlazaDTO;
 import es.safareyes.parkcontrol.dtos.PlazasOcupacionDTO;
 import es.safareyes.parkcontrol.exceptions.ReglaNegocio;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
@@ -9,6 +9,7 @@ import es.safareyes.parkcontrol.modelos.TipoPlaza;
 import es.safareyes.parkcontrol.servicios.PlazaService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -87,6 +88,14 @@ public class PlazaController {
     @GetMapping("/planta/{planta}")
     public List<Plaza> consultarPlazasPorPlanta(@PathVariable Integer planta) {
         return service.consultarPlazasPorPlanta(planta);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Plaza>> consultarPlazasTipoPlaza(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(service.consultarPlazasTipoPlaza(page, size));
     }
 
 }

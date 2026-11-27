@@ -45,7 +45,7 @@ public class SecurityConfig {
                         // ==========================================
                         // 1. RUTAS PÚBLICAS (sin token)
                         // ==========================================
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/**").permitAll()
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // Plazas (consulta pública)
                         .requestMatchers(HttpMethod.GET,
@@ -62,6 +62,9 @@ public class SecurityConfig {
                         // ==========================================
                         // 2. RUTAS DE ADMIN
                         // ==========================================
+                        .requestMatchers(HttpMethod.GET,
+                                "/plazas"
+                        ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,
                                 "/plazas",
                                 "/tarifas"

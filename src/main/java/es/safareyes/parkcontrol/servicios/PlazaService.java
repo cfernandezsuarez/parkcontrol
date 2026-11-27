@@ -1,6 +1,6 @@
 package es.safareyes.parkcontrol.servicios;
 
-import es.safareyes.parkcontrol.dtos.CrearNuevaPlazaDTO;
+import es.safareyes.parkcontrol.dtos.request.CrearNuevaPlazaDTO;
 import es.safareyes.parkcontrol.dtos.PlazasOcupacionDTO;
 import es.safareyes.parkcontrol.exceptions.ElementoNoEncontrado;
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
@@ -10,6 +10,7 @@ import es.safareyes.parkcontrol.repositorios.IPlazaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -118,6 +119,11 @@ public class PlazaService {
 
     public List<Plaza> consultarPlazasPorPlanta(Integer planta) {
         return repository.findByPlantaOrderByNumeroAsc(planta);
+    }
+
+    public Page<Plaza> consultarPlazasTipoPlaza(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
 }

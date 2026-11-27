@@ -1,4 +1,4 @@
-package es.safareyes.parkcontrol.dtos;
+package es.safareyes.parkcontrol.dtos.request;
 
 import es.safareyes.parkcontrol.modelos.EstadoPlaza;
 import es.safareyes.parkcontrol.modelos.TipoPlaza;
